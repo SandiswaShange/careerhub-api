@@ -1,20 +1,24 @@
+using API.Data;
+using Scalar.AspNetCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Controllers
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddSingleton<ListingStore>();
+
+// Scalar (API docs UI)
+builder.Services.AddOpenApi(); // required for Scalar in modern .NET templates
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Enable OpenAPI pipeline (Scalar uses this)
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.MapOpenApi(); // exposes /openapi.json for Scalar
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
