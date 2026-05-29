@@ -16,12 +16,13 @@ public record JobResponse
     
     JobType Type,
 
-   
+    DateTime PostedAt, //Server, at the moment of creation
+    
     bool IsActive, //Server — defaults to true on creation
 
-    decimal? SalaryMin,
+    decimal SalaryMin,
 
-    decimal? SalaryMax,
-    DateTime PostedAt, 
-    string SalaryDisplay //Server, at the moment of creation
+    decimal SalaryMax,
+     
+    string SalaryDisplay
 );

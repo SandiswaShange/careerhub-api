@@ -3,32 +3,35 @@ using API.Models;
 
 namespace API.DTOs;
 
-public class UpdateJobRequest : IValidatableObject
-{
+//Request DTO is what the client sends to the API/Backend to create a booking
+
+public record UpdateJobRequest
+(
     [Required]
     [StringLength(120, MinimumLength = 5)]
-    public string Title { get; set; } = string.Empty;
+    string Title,
 
     [Required]
     [StringLength(80, MinimumLength = 2)]
-    public string Company { get; set; } = string.Empty;
+    string Company,
 
     [Required]
-    public string Location { get; set; } = string.Empty;
+    string Location,
 
     [Required]
     [MinLength(20)]
-    public string Description { get; set; } = string.Empty;
+    string Description,
 
     [Required]
-    public JobType Type { get; set; }
+    JobType Type,
 
-    [Range(0.01, double.MaxValue)]
-    public decimal? SalaryMin { get; set; }
+    [Range(1, int.MaxValue)]
+    int? SalaryMin,
 
-    [Range(0.01, double.MaxValue)]
-    public decimal? SalaryMax { get; set; }
-
+    [Range(1, int.MaxValue)]
+    int? SalaryMax
+): IValidatableObject
+{
     public IEnumerable<ValidationResult> Validate(
         ValidationContext validationContext)
     {

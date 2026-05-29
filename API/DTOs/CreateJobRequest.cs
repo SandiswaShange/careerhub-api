@@ -3,6 +3,8 @@ using API.Models;
 
 namespace API.DTOs;
 
+//Request DTO is what the client sends to the API/Backend to create a booking
+
 public record CreateJobRequest
 (
     [Required]
@@ -23,14 +25,15 @@ public record CreateJobRequest
     [Required]
     JobType Type,
 
-    [Range(0.01, double.MaxValue)]
-    decimal? SalaryMin,
+    [Range(1, int.MaxValue)]
+    int? SalaryMin,
 
-    [Range(0.01, double.MaxValue)]
-    decimal? SalaryMax
-) : IValidatableObject
+    [Range(1, int.MaxValue)]
+    int? SalaryMax
+): IValidatableObject
 {
-    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    public IEnumerable<ValidationResult> Validate(
+        ValidationContext validationContext)
     {
         if (SalaryMin.HasValue &&
             SalaryMax.HasValue &&
