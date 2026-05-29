@@ -2,25 +2,26 @@ using API.Models;
 
 namespace API.DTOs;
 
-public record JobResponse
-{
-    public int Id { get; set; }
+public record JobResponse 
+(
+    Guid Id,
 
-    public string? Title { get; set; }
+    string Title,
 
-    public string? Description { get; set; }
+    string Description,
 
-    public string? Company { get; set; }
+     string Company,
 
-    public string? Location { get; set; }
+    string Location,
+    
+    JobType Type,
 
-    public JobType Type { get; set; }
+   
+    bool IsActive, //Server — defaults to true on creation
 
-    public decimal? SalaryMin { get; set; }
+    decimal? SalaryMin,
 
-    public decimal? SalaryMax { get; set; }
-
-    public DateTime PostedAt { get; set; }
-
-    public string SalaryDisplay { get; set; } = string.Empty;
-}
+    decimal? SalaryMax,
+    DateTime PostedAt, 
+    string SalaryDisplay //Server, at the moment of creation
+);

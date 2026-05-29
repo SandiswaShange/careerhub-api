@@ -3,34 +3,34 @@ using API.Models;
 
 namespace API.DTOs;
 
-public record CreateJobRequest : IValidatableObject
-{
+public record CreateJobRequest
+(
     [Required]
     [StringLength(120, MinimumLength = 5)]
-    public string Title { get; set; } = string.Empty;
+    string Title,
 
     [Required]
     [StringLength(80, MinimumLength = 2)]
-    public string Company { get; set; } = string.Empty;
+    string Company,
 
     [Required]
-    public string Location { get; set; } = string.Empty;
+    string Location,
 
     [Required]
     [MinLength(20)]
-    public string Description { get; set; } = string.Empty;
+    string Description,
 
     [Required]
-    public JobType Type { get; set; }
+    JobType Type,
 
     [Range(0.01, double.MaxValue)]
-    public decimal? SalaryMin { get; set; }
+    decimal? SalaryMin,
 
     [Range(0.01, double.MaxValue)]
-    public decimal? SalaryMax { get; set; }
-
-    public IEnumerable<ValidationResult> Validate(
-        ValidationContext validationContext)
+    decimal? SalaryMax
+) : IValidatableObject
+{
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         if (SalaryMin.HasValue &&
             SalaryMax.HasValue &&

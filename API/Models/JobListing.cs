@@ -1,25 +1,19 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace API.Models;
 
 public record JobListing
-{
-    public int Id { get; set; }
+(   Guid Id,
 
-    public string? Title { get; set; }
+    string? Title,
 
-    public string? Description { get; set; }
+    string? Description,
 
-    public string? Company { get; set; }
+    string? Company,
 
-    public string? Location { get; set; } 
+    string? Location, 
 
-    public DateTime PostedAt {get; set; }  //Server, at the moment of creation
-    public bool IsActive { get; set; } = true; //Server — defaults to true on creation
+    string? Type,
 
-    public JobType Type { get; set; }
+    DateTime PostedAt, //Server, at the moment of creation
 
-    public decimal? SalaryMin { get; set; }
-
-    public decimal? SalaryMax { get; set; }
-}
+    bool IsActive //Server — defaults to true on creation
+);

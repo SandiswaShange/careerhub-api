@@ -1,38 +1,41 @@
 using API.Data;
+using API.Models;
 using Microsoft.AspNetCore.Mvc;
-//Use IActionResult Because the method may return different HTTP responses
 
 namespace API.Controllers;
 
-[ApiController] //Marks this class as an API controller
-[Route("jobs")] //Defines the base route
+[ApiController]
+[Route("jobs")]
 public class JobsController : ControllerBase
-{
-    private readonly ListingStore _ListingStore;
-
-    public JobsController(ListingStore listingStore)
+{    // ── PATTERN A: IActionResult ────────────────────────────────────
+    [HttpGet("v-iactionresult")]
+    public async Task<IActionResult> GetListings_Untyped()
     {
-        _ListingStore = listingStore;
+        await Task.Delay(100);
+        return Ok(ListingStore.Jobs);
     }
 
+    // ── PATTERN B: ActionResult<T> ────────────────────────────────────
     [HttpGet]
-    public async Task<IActionResult> GetAllJobs()
+    public async Task<ActionResult<IEnumerable<JobListing>>> GetListingsAsync()
     {
-        var jobs = await _ListingStore.GetAllJobsAsync();
-
-        return Ok(jobs);
+        await Task.Delay(200);
+        return Ok(ListingStore.Jobs);
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetJobById(int id)
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<JobListing>> GetListingByIdAsync(Guid id)
     {
-        var job = await _ListingStore.GetJobByIdAsync(id);
+        await Task.Delay(50);
 
-        if (job == null)
+        var jobListing = ListingStore.Jobs.FirstOrDefault(j => j.Id == id);
+
+        if (jobListing is null)
         {
             return NotFound();
         }
 
-        return Ok(job);
+        return Ok(jobListing);
     }
+//===================================================================================================================================
 }
