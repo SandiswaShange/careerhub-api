@@ -12,7 +12,9 @@ public class ListingStore
             "Build and maintain backend services.",
             "CareerHub",
             "Johannesburg",
-            "Full-Time",
+            JobType.FullTime,
+            25000,
+            40000,
             DateTime.UtcNow,
             true
         ),
@@ -24,7 +26,9 @@ public class ListingStore
             "Develop responsive UI applications.",
             "CareerHub",
             "Cape Town",
-            "Remote",
+            JobType.PartTime,
+            30000,
+            50000,
             DateTime.UtcNow,
             true
         ),
@@ -35,7 +39,9 @@ public class ListingStore
             "Test software systems and report bugs.",
             "CareerHub",
             "London",
-            "Contract",
+            JobType.Contract,
+            20000,
+            35000,
             DateTime.UtcNow,
             true
         )
