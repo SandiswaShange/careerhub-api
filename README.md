@@ -54,3 +54,7 @@ PostedAt will appear in the JobResponse DTO but not in CreateJobRequest because 
 
 ##
 I used IValidatableObject in the DTO to enforce the SalaryMin/SalaryMax comparison rule because Data Annotations cannot compare two fields on their own. This keeps validation outside the controller and allows invalid requests to fail before business logic runs.
+
+##
+For the UpdateJobListing, I Return a 200 OK with the updated JobResponse so that tha user can see the changes in effect.
+For the DeleteJobAsync, I Return a 204 No Content because I feel that the user should see that the record is deleted imemdiately.
