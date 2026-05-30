@@ -4,49 +4,47 @@ namespace API.Data;
 
 public class ListingStore
 {
-    public static readonly List<JobListing> Jobs = new()
-    {
+    public static readonly List<JobListing> Jobs =
+    [
          new JobListing
-        {
-            Id = 001,
-            Title = "Junior Software Developer",
-            Description = "Build and maintain backend services.",
-            Company = "CareerHub",
-            Location = "Johannesburg",
-            Type = "Full-Time"
-        },
+        (   Guid.NewGuid(),
+            "Junior Software Developer",
+            "Build and maintain backend services.",
+            "CareerHub",
+            "Johannesburg",
+            JobType.FullTime,
+            25000,
+            40000,
+            DateTime.UtcNow,
+            true
+        ),
 
         new JobListing
-        {
-            Id = 002,
-            Title = "Frontend Developer",
-            Description = "Develop responsive UI applications.",
-            Company = "CareerHub",
-            Location = "Cape Town",
-            Type = "Remote"
-        },
+        (   
+            Guid.NewGuid(),
+            "Frontend Developer",
+            "Develop responsive UI applications.",
+            "CareerHub",
+            "Cape Town",
+            JobType.PartTime,
+            30000,
+            50000,
+            DateTime.UtcNow,
+            true
+        ),
 
         new JobListing
-        {
-            Id = 003,
-            Title = "QA Tester",
-            Description = "Test software systems and report bugs.",
-            Company = "CareerHub",
-            Location = "London",
-            Type = "Contract"
-        }
-    };
+        (   Guid.NewGuid(),
+            "QA Tester",
+            "Test software systems and report bugs.",
+            "CareerHub",
+            "London",
+            JobType.Contract,
+            20000,
+            35000,
+            DateTime.UtcNow,
+            true
+        )
+    ];
 
-    public Task<List<JobListing>> GetAllJobsAsync()
-    {
-        return Task.FromResult(Jobs);
-    }
-
-    public Task<JobListing?> GetJobByIdAsync(int id)
-    {
-        var job = Jobs.FirstOrDefault(j => j.Id == id);
-
-        return Task.FromResult(job);
-    }
-    
 }

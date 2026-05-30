@@ -1,16 +1,14 @@
 namespace API.Models;
 
-public class JobListing
-{
-    public int Id { get; set; }
-
-    public string? Title { get; set; }
-
-    public string? Description { get; set; }
-
-    public string? Company { get; set; }
-
-    public string? Location { get; set; } 
-
-    public string? Type  { get; set; }
-}
+public record JobListing
+(   Guid Id,
+    string? Title,
+    string? Description,
+    string? Company,
+    string? Location,
+    JobType Type,
+    int? SalaryMin,
+    int? SalaryMax,
+    DateTime PostedAt,//Server, at the moment of creation
+    bool IsActive //Server — defaults to true on creation
+);
