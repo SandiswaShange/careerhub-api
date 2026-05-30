@@ -24,7 +24,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi(); // exposes /openapi.json for Scalar
 }
-
+app.MapScalarApiReference();
 //app.UseHttpsRedirection();
 
 app.UseAuthorization();
