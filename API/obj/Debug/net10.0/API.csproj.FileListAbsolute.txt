@@ -33,3 +33,13 @@ C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\API\obj
 C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\API\obj\Debug\net10.0\API.genruntimeconfig.cache
 C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\API\obj\Debug\net10.0\ref\API.dll
 C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\API\bin\Debug\net10.0\Scalar.AspNetCore.dll
+C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\API\bin\Debug\net10.0\Microsoft.Extensions.DependencyModel.dll
+C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\API\bin\Debug\net10.0\Serilog.dll
+C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\API\bin\Debug\net10.0\Serilog.AspNetCore.dll
+C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\API\bin\Debug\net10.0\Serilog.Extensions.Hosting.dll
+C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\API\bin\Debug\net10.0\Serilog.Extensions.Logging.dll
+C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\API\bin\Debug\net10.0\Serilog.Formatting.Compact.dll
+C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\API\bin\Debug\net10.0\Serilog.Settings.Configuration.dll
+C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\API\bin\Debug\net10.0\Serilog.Sinks.Console.dll
+C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\API\bin\Debug\net10.0\Serilog.Sinks.Debug.dll
+C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\API\bin\Debug\net10.0\Serilog.Sinks.File.dll
