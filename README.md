@@ -54,3 +54,9 @@ PostedAt will appear in the JobResponse DTO but not in CreateJobRequest because 
 
 ##
 I used IValidatableObject in the DTO to enforce the SalaryMin/SalaryMax comparison rule because Data Annotations cannot compare two fields on their own. This keeps validation outside the controller and allows invalid requests to fail before business logic runs.
+
+## Controller Thinning
+Throwing JobNotFoundException instead of returning NotFound() directly makes the controller cleaner and easier to read. The controller only focuses on successful actions, while the global exception handler deals with errors, which is good practice for separation of concerns. This also avoids repeating the same error code in many places and keeps responses consistent across the API.
+## Structured Logging
+Serilog is better than Console.WriteLine because it gives more organised logs. It records useful information like the request, status code, and errors in a structured way, making problems easier to find and fix in a production environment. It's not apparent in this assignment, but in larger enterprise applications, more complex data and metadata needs to be stored in a 
+Serilog is better than Console.WriteLine because it gives more organised logs. It records useful information like the request, status code, and errors in a structured way, making problems easier to find and fix in a production environment. It's not apparent in this assignment, but in larger enterprise applications, more complex data and metadata need to be logged so that they can be filtered by specific object properties instantly if needed.
