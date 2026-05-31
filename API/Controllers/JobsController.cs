@@ -2,6 +2,7 @@ using API.Data;
 using API.DTOs;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
+using API.Exceptions;
 
 namespace API.Controllers;
 
@@ -33,7 +34,7 @@ public class JobsController : ControllerBase
 
         if (jobListing is null)
         {
-            return NotFound();
+            throw new JobNotFoundException(id);
         }
 
         return Ok(jobListing);
@@ -45,10 +46,10 @@ public class JobsController : ControllerBase
         await Task.Delay(51);
 
         bool isDuplicate = ListingStore.Jobs.Any
-        (j => j.Company == request.Company && j.Location == request.Location);
+        (j => j.Company == request.Company && j.Title == request.Title);
         if (isDuplicate)
         {
-            return Conflict("A job listing already exists for this company at the specified location."); // HTTP 409 Conflict
+            throw new DuplicateJobListingException(request.Company, request.Title);
         }
 
         var newListing = new JobListing(
@@ -95,7 +96,7 @@ public class JobsController : ControllerBase
 
         if (job is null)
         {
-            return NoContent(); // HTTP 204 No Content
+            throw new JobNotFoundException(id);
         }
 
         ListingStore.Jobs.Remove(job);
@@ -111,7 +112,7 @@ public class JobsController : ControllerBase
         
         if (existingListing == null)
         {
-            return Conflict("A job listing already exists for this company at the specified location."); // HTTP 409 Conflict
+            throw new JobNotFoundException(id);
         }
 
         var updatedListing = existingListing with
