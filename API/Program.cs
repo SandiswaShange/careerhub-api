@@ -1,12 +1,21 @@
 using API.Data;
 using Scalar.AspNetCore;
+using API.Middleware;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();//assignemnt 4.3
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
 
 // Controllers
 builder.Services.AddControllers();
 
 builder.Services.AddProblemDetails(); // enables standard RFC7807 Problem Details responses
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();//assignemnt 4.3
 
 builder.Services.AddSingleton<ListingStore>();
 
@@ -16,6 +25,7 @@ builder.Services.AddOpenApi(); // required for Scalar in modern .NET templates
 var app = builder.Build();
 
 app.UseExceptionHandler(); // catches unhandled exceptions and returns Problem Details JSON
+app.UseSerilogRequestLogging();//assignemnt 4.3
 
 app.UseStatusCodePages(); // turns status codes like 404 into Problem Details responses
 
