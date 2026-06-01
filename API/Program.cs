@@ -21,11 +21,20 @@ builder.Services.AddSingleton<ListingStore>();
 
 // Scalar (API docs UI)
 builder.Services.AddOpenApi(); // required for Scalar in modern .NET templates
+builder.Services.AddCors(options =>
+    {
+     options.AddPolicy("AuthorizationPolicy", policy =>
+     {
+        policy.WithOrigins("http://localhost:300").AllowAnyHeader().AllowAnyMethod();
+     }); 
+    }); 
 
 var app = builder.Build();
 
-app.UseExceptionHandler(); // catches unhandled exceptions and returns Problem Details JSON
+
 app.UseSerilogRequestLogging();//assignemnt 4.3
+    app.UseCors("AuthorizationPolicy"); 
+app.UseExceptionHandler(); // catches unhandled exceptions and returns Problem Details JSON
 
 app.UseStatusCodePages(); // turns status codes like 404 into Problem Details responses
 
