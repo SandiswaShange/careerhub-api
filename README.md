@@ -60,3 +60,15 @@ Throwing JobNotFoundException instead of returning NotFound() directly makes the
 ## Structured Logging
 Serilog is better than Console.WriteLine because it gives more organised logs. It records useful information like the request, status code, and errors in a structured way, making problems easier to find and fix in a production environment. It's not apparent in this assignment, but in larger enterprise applications, more complex data and metadata needs to be stored in a 
 Serilog is better than Console.WriteLine because it gives more organised logs. It records useful information like the request, status code, and errors in a structured way, making problems easier to find and fix in a production environment. It's not apparent in this assignment, but in larger enterprise applications, more complex data and metadata need to be logged so that they can be filtered by specific object properties instantly if needed.
+
+## Stateless Auth
+In session-based authentication the server creates and manages a session for each user who logs into a website or app. When they log in, the server assigns a session ID that's usually stored as a cookie on the device. The session ID allows the server to recognize the logged in user when they go through different pages or parts of the site.
+JWTs on the other hand are automatically generated when a user logs in. They contain a header, payload and a signature that verifies the token hasn't been changed along the way. They have an expiry time, whereby a user needs to log in again to generate a new one. The server does not store any session data. It simply validates the token’s signature and reads its contents in tbe payload.  With session-based authorization, requests may hit different servers that do not share session data unless extra infrastructure is used. JWT avoids this problem because any server can independently verify the token without needing shared state, making it much easier to scale horizontally.
+
+## 401 vs 403
+A 401 and a 403 both indicate that access to a resource is denied, but they occur at different stages of the authentication and authorization processes.
+In the middleware pipeline, a 401 is produced during the authentication phase when the user's credentials are invalid or when they're not provided. A 403 is produced during the authorization phase, after the user has already been authenticated, when the authorization middleware determines that the user does not have the required permissions to access the resource they want to access.
+
+## Token Storage
+Storing a JSON Web Token (JWT) in localStorage is a security risk because any JavaScript running in the browser can access it, exposing your application to Cross-Site Scripting (XSS) attacks. If a malicious script is injected, it can steal the token and impersonate the user.
+I'd reccommend storing the JWT in a cookie with the HttpOnly flag enabled to prevents client-side JavaScript from accessing the token.
