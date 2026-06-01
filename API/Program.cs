@@ -42,7 +42,7 @@ builder.Services.AddCors(options =>
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtSecretKey)
+                Encoding.UTF8.GetBytes(jwtSecretKey!)
             )
         };
     });

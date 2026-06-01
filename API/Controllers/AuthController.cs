@@ -14,6 +14,13 @@ namespace API.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
+    private readonly IConfiguration _configuration;
+
+    public AuthController(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
@@ -32,8 +39,9 @@ public class AuthController : ControllerBase
 
         };
 //=======================================================Step 3: Create the signing credentials===================================================
+        var jwtSecretKey = _configuration["Jwt:SecretKey"];
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes("Jwt:SecretKey")
+            Encoding.UTF8.GetBytes(jwtSecretKey!)
         );
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
