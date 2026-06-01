@@ -31,7 +31,7 @@ builder.Services.AddCors(options =>
         policy.WithOrigins("http://localhost:300").AllowAnyHeader().AllowAnyMethod();
      }); 
     });
-    var jwtSecretKey = "super-secret-key-that-must-be-very-long-for-hs256-to-work-securely!"; 
+    var jwtSecretKey = builder.Configuration["Jwt:SecretKey"];
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
