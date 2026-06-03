@@ -6,9 +6,14 @@ namespace CareerHub.Data;
 public class JobListingDbContext(DbContextOptions<JobListingDbContext> options): DbContext(options)
 {
     public DbSet<JobListing> JobListings => Set<JobListing>();
+    public DbSet<Company> Companies => Set<Company>();
+    public DbSet<Applicant> Applicants => Set<Applicant>();
+    public DbSet<Application> Applications => Set<Application>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+//=======================================================JobListing entity===============================================================
+
         modelBuilder.Entity<JobListing>(entity =>
         {
         entity.ToTable("job_listings");
@@ -18,12 +23,84 @@ public class JobListingDbContext(DbContextOptions<JobListingDbContext> options):
 
         entity.Property(j => j.Title).IsRequired().HasMaxLength(100);
 
-        entity.Property(j => j.Company).IsRequired().HasMaxLength(100);
+        entity.Property(j => j.CompanyId).IsRequired();
 
         entity.Property(j => j.Description).IsRequired().HasMaxLength(2000);
 
         entity.Property(j => j.Location).IsRequired().HasMaxLength(100);
     });
-        
-    }
+
+//=======================================================Company entity===============================================================
+        modelBuilder.Entity<Company>(entity =>
+        {
+    entity.ToTable("companies");
+
+    entity.HasKey(c => c.Id);
+
+    entity.Property(c => c.Id).ValueGeneratedNever();
+
+    entity.Property(c => c.Name).IsRequired().HasMaxLength(100);
+
+    entity.HasIndex(c => c.Name).IsUnique();
+    });
+    
+//=======================================================Applicant entity===============================================================
+        modelBuilder.Entity<Applicant>(entity =>
+        {
+    entity.ToTable("applicants");
+
+    entity.HasKey(a => a.Id);
+
+    entity.Property(a => a.Id).ValueGeneratedNever();
+
+    entity.Property(a => a.FirstName).IsRequired().HasMaxLength(50);
+
+    entity.Property(a => a.LastName).IsRequired().HasMaxLength(50);
+
+    entity.Property(a => a.Email).IsRequired().HasMaxLength(100);
+
+    entity.HasIndex(a => a.Email).IsUnique();
+    });
+
+//=======================================================Application entity===============================================================
+    modelBuilder.Entity<Application>(entity =>
+    {
+    entity.ToTable("applications");
+    
+    // composite key of JobListingId and ApplicantId
+    entity.HasKey(a => new 
+    {
+        a.JobListingId,
+        a.ApplicantId
+    });
+
+    entity.Property(a => a.JobListingId).ValueGeneratedNever();
+
+    entity.Property(a => a.ApplicantId).ValueGeneratedNever();
+
+    entity.Property(a => a.Status).IsRequired();
+
+    entity.Property(a => a.SubmittedAt).IsRequired();
+    });
+
+//=======================================================Relationships===============================================================
+    modelBuilder.Entity<JobListing>()
+    .HasOne(j => j.Company)
+    .WithMany(c => c.JobListings)
+    .HasForeignKey(j => j.CompanyId)
+    .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<Application>()
+    .HasOne(a => a.JobListing)
+    .WithMany(j => j.Applications)
+    .HasForeignKey(a => a.JobListingId)
+    .OnDelete(DeleteBehavior.Cascade);
+
+    modelBuilder.Entity<Application>()
+    .HasOne(a => a.Applicant)
+    .WithMany(ap => ap.Applications)
+    .HasForeignKey(a => a.ApplicantId)
+    .OnDelete(DeleteBehavior.Cascade);
+
+}
 }

@@ -7,6 +7,7 @@ public class JobListing
     public string Description { get; set; } = string.Empty;
     public Guid CompanyId { get; set; }
     public Company Company { get; set; } = null!;
+    public ICollection<Application> Applications { get; set; } = new List<Application>();
     public string Location { get; set; } = string.Empty;
     public JobType Type { get; set; }
     public decimal? MinSalary { get; set; }
