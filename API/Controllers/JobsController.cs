@@ -54,18 +54,19 @@ public class JobsController : ControllerBase
             throw new DuplicateJobListingException(request.Company, request.Title);
         }
 
-        var newListing = new JobListing(
-            Guid.NewGuid(),
-            request.Title,
-            request.Description,
-            request.Company,
-            request.Location,
-            request.Type,
-            request.SalaryMin,
-            request.SalaryMax,
-            DateTime.UtcNow, // PostedAt is set by the server
-            true
-        );
+        var newListing = new JobListing
+        {
+            Id = Guid.NewGuid(),
+            Title = request.Title,
+            Description = request.Description,
+            Company = request.Company,
+            Location = request.Location,
+            Type = request.Type,
+            MinSalary = request.SalaryMin,
+            MaxSalary = request.SalaryMax,
+            PostedAt = DateTime.UtcNow, // PostedAt is set by the server
+            IsActive = true
+        };
 
         //3. Save the booking
         ListingStore.Jobs.Add(newListing);
@@ -80,8 +81,8 @@ public class JobsController : ControllerBase
             newListing.Type,
             newListing.PostedAt,
             newListing.IsActive,
-            newListing.SalaryMin!.Value,
-            newListing.SalaryMax!.Value,
+            newListing.MinSalary!.Value,
+            newListing.MaxSalary!.Value,
             GetSalaryDisplay(newListing)
         );
 
@@ -119,34 +120,26 @@ public class JobsController : ControllerBase
             throw new JobNotFoundException(id);
         }
 
-        var updatedListing = existingListing with
-        {
-            Title = request.Title,
-            Description = request.Description,
-            Company = request.Company,
-            Location = request.Location,
-            Type = request.Type,
-            SalaryMin = request.SalaryMin,
-            SalaryMax = request.SalaryMax
-        };
+        existingListing.Title = request.Title;
+        existingListing.Description = request.Description;
+        existingListing.Company = request.Company;
+        existingListing.Location = request.Location;
+        existingListing.Type = request.Type;
+        existingListing.MinSalary = request.SalaryMin;
+        existingListing.MaxSalary = request.SalaryMax;
 
-        //3. Save the job listing
-        ListingStore.Jobs.Remove(existingListing);
-        ListingStore.Jobs.Add(updatedListing);
-
-        //4. Map domain Model to Response DTO
         var response = new JobResponse(
-            updatedListing.Id,
-            updatedListing.Title!,
-            updatedListing.Description!,
-            updatedListing.Company!,
-            updatedListing.Location!,
-            updatedListing.Type,
-            updatedListing.PostedAt,
-            updatedListing.IsActive,
-            updatedListing.SalaryMin!.Value,
-            updatedListing.SalaryMax!.Value,
-            GetSalaryDisplay(updatedListing)
+            existingListing.Id,
+            existingListing.Title!,
+            existingListing.Description!,
+            existingListing.Company!,
+            existingListing.Location!,
+            existingListing.Type,
+            existingListing.PostedAt,
+            existingListing.IsActive,
+            existingListing.MinSalary!.Value,
+            existingListing.MaxSalary!.Value,
+            GetSalaryDisplay(existingListing)
         );
         
         //5. Return the 200 Created = Location header
@@ -157,14 +150,14 @@ public class JobsController : ControllerBase
  //=================================================================================================================================   
     private static string GetSalaryDisplay(JobListing job)
     {
-    if (job.SalaryMin.HasValue && job.SalaryMax.HasValue)
+    if (job.MinSalary.HasValue && job.MaxSalary.HasValue)
     {
-        return $"R{job.SalaryMin} - R{job.SalaryMax}/month";
+        return $"R{job.MinSalary} - R{job.MaxSalary}/month";
     }
 
-    if (job.SalaryMin.HasValue)
+    if (job.MinSalary.HasValue)
     {
-        return $"From R{job.SalaryMin}/month";
+        return $"From R{job.MinSalary}/month";
     }
 
     return "Salary not specified";

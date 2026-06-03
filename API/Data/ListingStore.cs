@@ -7,44 +7,45 @@ public class ListingStore
     public static readonly List<JobListing> Jobs =
     [
          new JobListing
-        (   Guid.NewGuid(),
-            "Junior Software Developer",
-            "Build and maintain backend services.",
-            "CareerHub",
-            "Johannesburg",
-            JobType.FullTime,
-            25000,
-            40000,
-            DateTime.UtcNow,
-            true
-        ),
+         {
+            Id = Guid.NewGuid(),
+            Title = "Junior Software Developer",
+            Description = "Build and maintain backend services.",
+            Company = "CareerHub",
+            Location = "Johannesburg",
+            Type = JobType.FullTime,
+            MinSalary = 25000,
+            MaxSalary = 40000,
+            PostedAt = DateTime.UtcNow,
+            IsActive = true 
+         },
 
         new JobListing
-        (   
-            Guid.NewGuid(),
-            "Frontend Developer",
-            "Develop responsive UI applications.",
-            "CareerHub",
-            "Cape Town",
-            JobType.PartTime,
-            30000,
-            50000,
-            DateTime.UtcNow,
-            true
-        ),
-
+        {
+            Id = Guid.NewGuid(),
+            Title = "Frontend Developer",
+            Description = "Develop responsive UI applications.",
+            Company = "CareerHub",
+            Location = "Cape Town",
+            Type = JobType.PartTime,
+            MinSalary = 30000,
+            MaxSalary = 50000,
+            PostedAt = DateTime.UtcNow,
+            IsActive = true
+        },
         new JobListing
-        (   Guid.NewGuid(),
-            "QA Tester",
-            "Test software systems and report bugs.",
-            "CareerHub",
-            "London",
-            JobType.Contract,
-            20000,
-            35000,
-            DateTime.UtcNow,
-            true
-        )
+        {
+            Id = Guid.NewGuid(),
+            Title = "QA Tester",
+            Description = "Test software systems and report bugs.",
+            Company = "CareerHub",
+            Location = "London",
+            Type = JobType.Contract,
+            MinSalary = 20000,
+            MaxSalary = 35000,
+            PostedAt = DateTime.UtcNow,
+            IsActive = true
+        }
     ];
 
 }

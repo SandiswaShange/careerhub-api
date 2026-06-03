@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CareerHub.Data;
 
-public class CareerHubDbContext(DbContextOptions<CareerHubDbContext> options): DbContext(options)
+public class JobListingDbContext(DbContextOptions<JobListingDbContext> options): DbContext(options)
 {
     //public DbSet<JobListing> JobListings => Set<JobListing>();
 
