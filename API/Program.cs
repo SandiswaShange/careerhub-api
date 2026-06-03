@@ -1,10 +1,12 @@
-using API.Data;
 using Scalar.AspNetCore;
 using API.Middleware;
 using Serilog;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using CareerHub.Data;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -20,7 +22,9 @@ builder.Services.AddControllers();
 builder.Services.AddProblemDetails(); // enables standard RFC7807 Problem Details responses
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();//assignemnt 4.3
 
-builder.Services.AddSingleton<ListingStore>();
+builder.Services.AddDbContext<JobListingDbContext>(options =>
+    options.UseSqlite(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Scalar (API docs UI)
 builder.Services.AddOpenApi(); // required for Scalar in modern .NET templates
@@ -28,7 +32,7 @@ builder.Services.AddCors(options =>
     {
      options.AddPolicy("AuthorizationPolicy", policy =>
      {
-        policy.WithOrigins("http://localhost:300").AllowAnyHeader().AllowAnyMethod();
+        policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
      }); 
     });
     var jwtSecretKey = builder.Configuration["Jwt:SecretKey"];
