@@ -72,3 +72,16 @@ In the middleware pipeline, a 401 is produced during the authentication phase wh
 ## Token Storage
 Storing a JSON Web Token (JWT) in localStorage is a security risk because any JavaScript running in the browser can access it, exposing your application to Cross-Site Scripting (XSS) attacks. If a malicious script is injected, it can steal the token and impersonate the user.
 I'd reccommend storing the JWT in a cookie with the HttpOnly flag enabled to prevents client-side JavaScript from accessing the token.
+
+## The Change Tracker
+EF Core's Change Tracker monitors entities that are added to the dbcontext and keeps track of any changes made to them, such as updated property values, new records, or deleted records. When SaveChangesAsync() is called, EF Core examines all tracked changes and sends the necessary database commands in a single operation. Calling SaveChangesAsync() once at the end helps ensure that all changes are saved together as a single unit of work rather than saving each property change individually.
+
+
+## Migrations as version control
+
+Migration files should be committed to source control with the code changes because they contain the database updates needed for the new code to work correctly. If a teammate pulls the code but does not have or apply the migration, their database schema will not match the application, which can cause errors such as missing tables or columns when the application runs.
+
+
+## Connection string security
+Connection strings are often placed in appsettings.Development rather than appsettings because they usually contain environment variables like database instantiation used only during local development. Keeping them in the development json file helps prevent accidental exposure of production settings and allows different environments to use different databases without modifying the main configuration file.
+For production deployments, a safer approach is to store connection strings outside of configuration files entirely, using environment variables, a secret management service such as Azure Key Vault or AWS Secrets Manager, etc. These approaches reduce the risk of credential leaks and they align with security best practices by keeping sensitive information out of the application codebase and repository
