@@ -1,4 +1,6 @@
 using API.Data;
+using CareerHub.Data;
+using Microsoft.EntityFrameworkCore;
 using API.DTOs;
 using API.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -10,28 +12,30 @@ namespace API.Controllers;
 [ApiController]
 [Route("jobs")]
 public class JobsController : ControllerBase
-{    // ── PATTERN A: IActionResult ────────────────────────────────────
+{    
+    private readonly JobListingDbContext _db;
+    public JobsController(JobListingDbContext db)
+    {
+        _db = db;
+    }
+    // ── PATTERN A: IActionResult ────────────────────────────────────
     [HttpGet("v-iactionresult")]
     public async Task<IActionResult> GetListings_Untyped()
     {
-        await Task.Delay(100);
-        return Ok(ListingStore.Jobs);
+        return Ok(await _db.JobListings.ToListAsync());
     }
 
     // ── PATTERN B: ActionResult<T> ────────────────────────────────────
     [HttpGet]
     public async Task<ActionResult<IEnumerable<JobListing>>> GetListingsAsync()
     {
-        await Task.Delay(200);
-        return Ok(ListingStore.Jobs);
+        return Ok(await _db.JobListings.ToListAsync());
     }
 
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<JobListing>> GetListingByIdAsync(Guid id)
     {
-        await Task.Delay(50);
-
-        var jobListing = ListingStore.Jobs.FirstOrDefault(j => j.Id == id);
+        var jobListing = await _db.JobListings.FindAsync(id);
 
         if (jobListing is null)
         {
@@ -45,10 +49,7 @@ public class JobsController : ControllerBase
     [Authorize(Roles = "Employer")]
     public async Task<ActionResult<JobResponse>> CreateBookingAsync(CreateJobRequest request)
     {
-        await Task.Delay(51);
-
-        bool isDuplicate = ListingStore.Jobs.Any
-        (j => j.Company == request.Company && j.Title == request.Title);
+        bool isDuplicate = await _db.JobListings.AnyAsync(j => j.Company == request.Company &&j.Title == request.Title);
         if (isDuplicate)
         {
             throw new DuplicateJobListingException(request.Company, request.Title);
@@ -69,7 +70,8 @@ public class JobsController : ControllerBase
         };
 
         //3. Save the booking
-        ListingStore.Jobs.Add(newListing);
+        _db.JobListings.Add(newListing);
+        await _db.SaveChangesAsync();
 
         //4. Map domain Model to Response DTO
         var response = new JobResponse(
@@ -94,27 +96,24 @@ public class JobsController : ControllerBase
     [Authorize(Roles = "Employer")]
     public async Task<IActionResult> DeleteJobAsync(Guid id )
     {
-        await Task.Delay(51); //will replace with an actual database call
-
-        var job = ListingStore.Jobs.FirstOrDefault(j => j.Id == id);
+        var job = await _db.JobListings.FindAsync(id);
 
         if (job is null)
         {
             throw new JobNotFoundException(id);
         }
 
-        ListingStore.Jobs.Remove(job);
-        return NoContent(); // HTTP 204 No Content — indicates success but no body is returned
+        _db.JobListings.Remove(job);
+        await _db.SaveChangesAsync();
+        return NoContent();
     }
 
     [HttpPut("{id:guid}")]
     [Authorize(Roles = "Employer")]
     public async Task<ActionResult<JobResponse>> UpdateJobAsync(Guid id,[FromBody] CreateJobRequest request)
     {
-        await Task.Delay(51);
+        var existingListing = await _db.JobListings.FindAsync(id);
 
-        var existingListing = ListingStore.Jobs.FirstOrDefault(b => b.Id == id);
-        
         if (existingListing == null)
         {
             throw new JobNotFoundException(id);
@@ -127,6 +126,7 @@ public class JobsController : ControllerBase
         existingListing.Type = request.Type;
         existingListing.MinSalary = request.SalaryMin;
         existingListing.MaxSalary = request.SalaryMax;
+        await _db.SaveChangesAsync();
 
         var response = new JobResponse(
             existingListing.Id,

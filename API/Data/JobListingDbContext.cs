@@ -5,7 +5,7 @@ namespace CareerHub.Data;
 
 public class JobListingDbContext(DbContextOptions<JobListingDbContext> options): DbContext(options)
 {
-    //public DbSet<JobListing> JobListings => Set<JobListing>();
+    public DbSet<JobListing> JobListings => Set<JobListing>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
