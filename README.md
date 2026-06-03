@@ -85,3 +85,25 @@ Migration files should be committed to source control with the code changes beca
 ## Connection string security
 Connection strings are often placed in appsettings.Development rather than appsettings because they usually contain environment variables like database instantiation used only during local development. Keeping them in the development json file helps prevent accidental exposure of production settings and allows different environments to use different databases without modifying the main configuration file.
 For production deployments, a safer approach is to store connection strings outside of configuration files entirely, using environment variables, a secret management service such as Azure Key Vault or AWS Secrets Manager, etc. These approaches reduce the risk of credential leaks and they align with security best practices by keeping sensitive information out of the application codebase and repository
+
+## ERD relationships
+
+One-to-many
+
+Company -> JobListing
+Applicant -> Application
+JobListing -> Application
+
+Join entity
+
+Applicant to JobListing is many-to-many and is joined using Application as a joint entity.
+
+## Hidden join table
+
+Since the Application entity Because the relationship contains SubmittedAt and Status. A hidden many-to-many table can only store keys.
+Since an application has its own attributes and lifecycle, it must be represented as an explicit entity.
+
+## Company deletion
+
+I think the job listing must automatically be deleted along with it the company.
+Deletion of a company can be permitted because in some cases a company abruptly shuts down for different reasons, and the listing shouldn't exist without a company to be linked to because that company won't be able to hire anyone.
