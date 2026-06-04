@@ -86,6 +86,7 @@ Migration files should be committed to source control with the code changes beca
 Connection strings are often placed in appsettings.Development rather than appsettings because they usually contain environment variables like database instantiation used only during local development. Keeping them in the development json file helps prevent accidental exposure of production settings and allows different environments to use different databases without modifying the main configuration file.
 For production deployments, a safer approach is to store connection strings outside of configuration files entirely, using environment variables, a secret management service such as Azure Key Vault or AWS Secrets Manager, etc. These approaches reduce the risk of credential leaks and they align with security best practices by keeping sensitive information out of the application codebase and repository
 
+## Relationship design decisions
 ## ERD relationships
 
 One-to-many
@@ -107,3 +108,9 @@ Since an application has its own attributes and lifecycle, it must be represente
 
 I think the job listing must automatically be deleted along with it the company.
 Deletion of a company can be permitted because in some cases a company abruptly shuts down for different reasons, and the listing shouldn't exist without a company to be linked to because that company won't be able to hire anyone.
+
+## N+1 problem
+GET /jobs initially produced a single SQL query because no navigation properties were accessed. When I evolved the endpoint to include Company and Application data, I used projections used to ensure a single SQL statement was still generated and to avoid the N+1 problem
+
+## Read vs write queries
+In EF, a query can either use change tracking or no tracking. A tracked query allows EF Core to monitor any changes made to the retrieved entity and automatically save those changes when SaveChanges is called. A no-tracking query is usually used for GET endpoints because it improves performance by not storing entities in the change tracker, but using it in a write operation can cause a silent data loss bug. For example, if a job listing is retrieved with AsNoTracking(), its properties are modified, and SaveChanges() is called, EF Core will not detect the changes because the entity is not being tracked. The code runs without errors, but the updates are never saved to the database. Therefore, no-tracking queries are best for read-only operations, while tracked queries should be used when data will be modified.
