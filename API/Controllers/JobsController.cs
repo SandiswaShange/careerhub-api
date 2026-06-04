@@ -26,26 +26,53 @@ public class JobsController : ControllerBase
 
     // ── PATTERN B: ActionResult<T> ────────────────────────────────────
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<JobListing>>> GetListingsAsync()
+    public async Task<ActionResult<IEnumerable<JobListResponse>>> GetListingsAsync()
     {
-        return Ok(await _db.JobListings.ToListAsync());
+        //Any query that does not call SaveChangesAsync afterwards must not pay the cost of change tracking
+        var jobs = await _db.JobListings.AsNoTracking().Select(j =>
+        new JobListResponse(
+            j.Id,
+            j.Title,
+            j.Company.Name,
+            j.Location,
+            j.Type,
+            j.Applications.Count()
+        )).ToListAsync();
+
+    return Ok(jobs);      
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<JobListing>> GetListingByIdAsync(Guid id)
+    public async Task<ActionResult<JobDetailResponse>> GetListingByIdAsync(Guid id)
     {
-        var jobListing = await _db.JobListings.FindAsync(id);
+        var job = await _db.JobListings.AsNoTracking().Where(j => j.Id == id).Select(j =>
+        new JobDetailResponse(
+            j.Id,
+            j.Title,
+            j.Description,
+            j.Company.Name,
+            j.Location,
+            j.Type,
+            j.PostedAt,
+            j.Applications.Select(a =>
+                new ApplicationResponse(
+                    a.Applicant.FirstName + " " + a.Applicant.LastName,
+                    a.SubmittedAt,
+                    a.Status.ToString()
+            ))
+        ))
+        .SingleOrDefaultAsync();
 
-        if (jobListing is null)
-        {
-            throw new JobNotFoundException(id);
-        }
+    if (job is null)
+    {
+        throw new JobNotFoundException(id);
+    }
 
-        return Ok(jobListing);
+    return Ok(job);
     }
 //=================================================================================================================================
     [HttpPost]
-    [Authorize(Roles = "Employer")]
+    //[Authorize(Roles = "Employer")]
     public async Task<ActionResult<JobResponse>> CreateBookingAsync(CreateJobRequest request)
     {
 //=======================================================Company===============================================================
