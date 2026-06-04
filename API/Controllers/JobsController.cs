@@ -1,4 +1,3 @@
-using API.Data;
 using CareerHub.Data;
 using Microsoft.EntityFrameworkCore;
 using API.DTOs;
@@ -27,29 +26,70 @@ public class JobsController : ControllerBase
 
     // ── PATTERN B: ActionResult<T> ────────────────────────────────────
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<JobListing>>> GetListingsAsync()
+    public async Task<ActionResult<IEnumerable<JobListResponse>>> GetListingsAsync()
     {
-        return Ok(await _db.JobListings.ToListAsync());
+        //Any query that does not call SaveChangesAsync afterwards must not pay the cost of change tracking
+        var jobs = await _db.JobListings.AsNoTracking().Select(j =>
+        new JobListResponse(
+            j.Id,
+            j.Title,
+            j.Company.Name,
+            j.Location,
+            j.Type,
+            j.Applications.Count()
+        )).ToListAsync();
+
+    return Ok(jobs);      
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<JobListing>> GetListingByIdAsync(Guid id)
+    public async Task<ActionResult<JobDetailResponse>> GetListingByIdAsync(Guid id)
     {
-        var jobListing = await _db.JobListings.FindAsync(id);
+        var job = await _db.JobListings.AsNoTracking().Where(j => j.Id == id).Select(j =>
+        new JobDetailResponse(
+            j.Id,
+            j.Title,
+            j.Description,
+            j.Company.Name,
+            j.Location,
+            j.Type,
+            j.PostedAt,
+            j.Applications.Select(a =>
+                new ApplicationResponse(
+                    a.Applicant.FirstName + " " + a.Applicant.LastName,
+                    a.SubmittedAt,
+                    a.Status.ToString()
+            ))
+        ))
+        .SingleOrDefaultAsync();
 
-        if (jobListing is null)
-        {
-            throw new JobNotFoundException(id);
-        }
+    if (job is null)
+    {
+        throw new JobNotFoundException(id);
+    }
 
-        return Ok(jobListing);
+    return Ok(job);
     }
 //=================================================================================================================================
     [HttpPost]
-    [Authorize(Roles = "Employer")]
+    //[Authorize(Roles = "Employer")]
     public async Task<ActionResult<JobResponse>> CreateBookingAsync(CreateJobRequest request)
     {
-        bool isDuplicate = await _db.JobListings.AnyAsync(j => j.Company == request.Company &&j.Title == request.Title);
+//=======================================================Company===============================================================
+        var company = await _db.Companies.SingleOrDefaultAsync(c => c.Name == request.Company);
+        if (company is null)
+        {
+            company = new Company
+            {
+                Id = Guid.NewGuid(),
+                Name = request.Company
+            };
+
+            _db.Companies.Add(company);
+        }
+//======================================================================================================================
+
+        bool isDuplicate = await _db.JobListings.AnyAsync(j => j.CompanyId == company.Id && j.Title == request.Title);
         if (isDuplicate)
         {
             throw new DuplicateJobListingException(request.Company, request.Title);
@@ -60,7 +100,8 @@ public class JobsController : ControllerBase
             Id = Guid.NewGuid(),
             Title = request.Title,
             Description = request.Description,
-            Company = request.Company,
+            CompanyId = company.Id,
+            Company = company,
             Location = request.Location,
             Type = request.Type,
             MinSalary = request.SalaryMin,
@@ -78,7 +119,7 @@ public class JobsController : ControllerBase
             newListing.Id,
             newListing.Title!,
             newListing.Description!,
-            newListing.Company!,
+            newListing.Company!.Name,
             newListing.Location!,
             newListing.Type,
             newListing.PostedAt,
@@ -121,7 +162,21 @@ public class JobsController : ControllerBase
 
         existingListing.Title = request.Title;
         existingListing.Description = request.Description;
-        existingListing.Company = request.Company;
+//=======================================================Company===============================================================
+        var company = await _db.Companies.SingleOrDefaultAsync(c => c.Name == request.Company);
+        if (company is null)
+        {
+            company = new Company
+            {
+                Id = Guid.NewGuid(),
+                Name = request.Company
+            };
+
+            _db.Companies.Add(company);
+        }
+//======================================================================================================================
+        existingListing.CompanyId = company.Id;
+        existingListing.Company = company;
         existingListing.Location = request.Location;
         existingListing.Type = request.Type;
         existingListing.MinSalary = request.SalaryMin;
@@ -132,7 +187,7 @@ public class JobsController : ControllerBase
             existingListing.Id,
             existingListing.Title!,
             existingListing.Description!,
-            existingListing.Company!,
+            existingListing.Company!.Name,
             existingListing.Location!,
             existingListing.Type,
             existingListing.PostedAt,

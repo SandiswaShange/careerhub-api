@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\sandi\\Documents\\Bitcube Assignments\\CareerHub-API\\careerhub-api\\API\\API.csproj": {}
+    "C:\\Users\\sandi\\Documents\\Bitcube Assignments\\CareerHub-API\\careerhub-api\\api\\API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\sandi\\Documents\\Bitcube Assignments\\CareerHub-API\\careerhub-api\\API\\API.csproj": {
+    "C:\\Users\\sandi\\Documents\\Bitcube Assignments\\CareerHub-API\\careerhub-api\\api\\API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sandi\\Documents\\Bitcube Assignments\\CareerHub-API\\careerhub-api\\API\\API.csproj",
+        "projectUniqueName": "C:\\Users\\sandi\\Documents\\Bitcube Assignments\\CareerHub-API\\careerhub-api\\api\\API.csproj",
         "projectName": "API",
-        "projectPath": "C:\\Users\\sandi\\Documents\\Bitcube Assignments\\CareerHub-API\\careerhub-api\\API\\API.csproj",
+        "projectPath": "C:\\Users\\sandi\\Documents\\Bitcube Assignments\\CareerHub-API\\careerhub-api\\api\\API.csproj",
         "packagesPath": "C:\\Users\\sandi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sandi\\Documents\\Bitcube Assignments\\CareerHub-API\\careerhub-api\\API\\obj\\",
+        "outputPath": "C:\\Users\\sandi\\Documents\\Bitcube Assignments\\CareerHub-API\\careerhub-api\\api\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
