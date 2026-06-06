@@ -114,3 +114,39 @@ GET /jobs initially produced a single SQL query because no navigation properties
 
 ## Read vs write queries
 In EF, a query can either use change tracking or no tracking. A tracked query allows EF Core to monitor any changes made to the retrieved entity and automatically save those changes when SaveChanges is called. A no-tracking query is usually used for GET endpoints because it improves performance by not storing entities in the change tracker, but using it in a write operation can cause a silent data loss bug. For example, if a job listing is retrieved with AsNoTracking(), its properties are modified, and SaveChanges() is called, EF Core will not detect the changes because the entity is not being tracked. The code runs without errors, but the updates are never saved to the database. Therefore, no-tracking queries are best for read-only operations, while tracked queries should be used when data will be modified.
+
+## Boundary decision
+I will take the one repository per domain approach because each repository should be responsible for accessing and persisting its own domain object. A repository is the gateway to a specific part of the domain, not a catch-all data access class.
+IJobListingRepository will own JobListing data. ICompanyRepository will own Company data. IApplicationRepository will own Application data.
+This will keep responsibilities clear and prevents repositories from becoming large, tightly coupled classes that know about everything in the system.
+
+Justification:
+
+If a user wants to submit an application, the system will first verify that the referenced JobListing exists.
+The flow would be:
+ApplicationService receives the request -> ApplicationService asks IJobListingRepository whether the JobListing exists -> If it does not exist, the service rejects the request and returns a 404 maybe. If it exists, the service creates the Application and saves it through IApplicationRepository.
+The query will live in IJobListingRepository because the query is about JobListing data.
+The ApplicationService owns the business rule. The IJobListingRepository only provides the data needed to enforce that rule.
+
+
+## Return types
+Returning IQueryable<T> breaks the repository abstraction because it exposes query-building and persistence concerns to the service layer, forcing the service to depend on query-provider concepts that should remain hidden inside the repository implementation
+
+## Lifetime choices
+• CareerHubDbContext - Scoped
+If registered as Transient, every injection would get a new DbContext instance, and that means changes made through one repository may not be visible to another so transactions and change tracking become inconsistent. If registered as Singleton, one DbContext is shared by all requests and that will cause memory usage to grow because tracked entities will keep adding up.
+
+• JobListingService - Scoped
+If registered as Transient the application will still work but will be inefficient because of unnecessary object creation.
+If registered as Singleton, I'll either get a DI container error, or accidentally hold onto request-specific objects across requests. A singleton cannot safely depend on scoped services.
+
+• ApplicationRepository - Scoped
+Repositories usually depend on CareerHubDbContext, which is scoped. Since it uses a scoped DbContext, it should also be scoped.
+If registered as Transient it often works because each repository instance receives the same scoped DbContext for the current request, but unnecessary repository instances are created so there's no real benefit. If registered as Singleton it's very problematic because a singleton repository would hold a reference to a scoped DbContext. One of the problems would be lifetime mismatch.
+
+• ApplicationStatusCache - Singleton
+Making it a singleton will allow for fast access and minimal memory usage since one copy will be shared across the entire application.
+If registered as Transient every injection will create a new cache and just waste memory. If registered as Scoped a new cache will be created per request causing cache contents to be duplicated every request and reducing performance which defeats the purpose of a cache.
+
+## Status transitions
+The validation belongs in the Domain layer because status transitions are business rules that define valid behavior of an Application. Putting the rule in the controller is wrong because controllers should handle HTTP concerns, the logic gets duplicated across entry points, and it can be bypassed. Putting the rule in the repository is wrong because repositories are responsible for persistence, not business decisions. Mixing workflow validation into data access violates separation of concerns and makes the repository harder to maintain and reuse.
