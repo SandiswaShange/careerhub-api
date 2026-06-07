@@ -1,5 +1,4 @@
 using API.DTOs;
-using SQLitePCL;
 
 public interface IJobListingService
 {

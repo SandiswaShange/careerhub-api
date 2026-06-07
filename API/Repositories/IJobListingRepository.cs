@@ -12,9 +12,9 @@ public interface IJobListingRepository
 
     Task<bool>IsOpenForApplicationsAsync(Guid listingId);
 
-    Task<JobListing> AddAsync(JobListing listing);
+    Task AddAsync(JobListing listing);
 
-    Task<JobListing> UpdateAsync(JobListing listing);
+    Task UpdateAsync(JobListing listing);
 
-    Task<JobListing> CloseAsync(JobListing listingId);
+    Task CloseAsync(Guid listingId);
 }
