@@ -28,6 +28,8 @@ public class JobListingDbContext(DbContextOptions<JobListingDbContext> options):
         entity.Property(j => j.Description).IsRequired().HasMaxLength(2000);
 
         entity.Property(j => j.Location).IsRequired().HasMaxLength(100);
+        
+        entity.Property(j => j.ClosingDate).IsRequired();
     });
 
 //=======================================================Company entity===============================================================

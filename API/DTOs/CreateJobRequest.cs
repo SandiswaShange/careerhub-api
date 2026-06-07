@@ -29,7 +29,10 @@ public record CreateJobRequest
     int? SalaryMin,
 
     [Range(1, int.MaxValue)]
-    int? SalaryMax
+    int? SalaryMax,
+    
+    [Required]
+    DateTime ClosingDate
 ): IValidatableObject
 {
     public IEnumerable<ValidationResult> Validate(
