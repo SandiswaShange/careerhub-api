@@ -3,7 +3,7 @@ using API.Models;
 
 public interface IApplicationService
 {
-    Task SubmitApplicationAsync(CreateJobRequest dto);
+    Task SubmitApplicationAsync(CreateApplicationRequest dto);
 
     Task<IEnumerable<ApplicationResponse>>GetApplicationsForListingAsync(Guid listingId);
 
