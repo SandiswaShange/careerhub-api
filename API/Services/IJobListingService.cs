@@ -1,4 +1,5 @@
 using API.DTOs;
+using SQLitePCL;
 
 public interface IJobListingService
 {
@@ -6,9 +7,9 @@ public interface IJobListingService
 
     Task<JobDetailResponse>GetListingAsync(Guid listingId);
 
-    Task CreateListingAsync(CreateJobRequest dto);
+    Task<JobResponse> CreateListingAsync(CreateJobRequest dto);
 
-    Task UpdateListingAsync(Guid listingId, UpdateJobRequest dto);
+    Task<JobResponse> UpdateListingAsync(Guid listingId, UpdateJobRequest dto);
 
     Task CloseListingAsync(Guid listingId);
 }

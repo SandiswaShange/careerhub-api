@@ -1,7 +1,7 @@
 using API.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace CareerHub.Data;
+namespace API.Data;
 
 public class JobListingDbContext(DbContextOptions<JobListingDbContext> options): DbContext(options)
 {
