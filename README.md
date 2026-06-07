@@ -120,7 +120,7 @@ I will take the one repository per domain approach because each repository shoul
 IJobListingRepository will own JobListing data. ICompanyRepository will own Company data. IApplicationRepository will own Application data.
 This will keep responsibilities clear and prevents repositories from becoming large, tightly coupled classes that know about everything in the system.
 
-Justification:
+### Justification:
 
 If a user wants to submit an application, the system will first verify that the referenced JobListing exists.
 The flow would be:
@@ -150,3 +150,47 @@ If registered as Transient every injection will create a new cache and just wast
 
 ## Status transitions
 The validation belongs in the Domain layer because status transitions are business rules that define valid behavior of an Application. Putting the rule in the controller is wrong because controllers should handle HTTP concerns, the logic gets duplicated across entry points, and it can be bypassed. Putting the rule in the repository is wrong because repositories are responsible for persistence, not business decisions. Mixing workflow validation into data access violates separation of concerns and makes the repository harder to maintain and reuse.
+
+## What the Controller Lost
+During the refactor, all business logic and data access logic were removed from the controllers. The controllers now perform only three responsibilities: receive the HTTP request, call a service method, and return an HTTP response.
+
+### Logic moved to the Repository Layer
+* Retrieving active job listings from the database.
+* Retrieving a single job listing and its related application data.
+* Checking whether a job listing exists and whether it's still open for applications.
+* Checking whether an applicant has already applied to a listing.
+* Creating, updating, and closing job listings.
+* Creating and updating applications.
+
+Repositories are the correct location because they are responsible for data access and are the only layer that should interact with EF Core and the DbContext.
+
+### Logic moved to the Service Layer
+* Verifying that a company exists before creating a listing.
+* Ensuring a listing's closing date is in the future.
+* Preventing updates to closed listings.
+* Preventing duplicate applications.
+* Validating application status transitions.
+* Ensuring applicants can only withdraw their own applications.
+* Throwing domain-specific exceptions when business rules are violated.
+
+Services are the correct location because these rules represent business behaviour rather than HTTP handling or database access.
+
+### Result of the Refactor
+The controllers are now much easier to understand becaues they have less code. Business rules can be reused from other parts of the application without requiring an HTTP request, and data access concerns are isolated behind repository interfaces.
+
+## Status Transition Design
+I implemented the application workflow using a dedicated status transition rules component that defines all valid transitions in a single location.
+Instead of using multiple switch statements or nested if else blocks throughout the codebase, the valid transitions are stored in a central collection and queried whenever a status update is requested.
+When the ApplicationService receives a request to change an application's status, it calls the transition validation component to determine whether the requested transition is allowed. This validation occurs entirely in memory and does not require a database query.
+If the business later decides to allow a transition like "Offered → Accepted", only a single entry needs to be added to the transition rule definition. No service methods, controllers, repositories, or additional conditional logic need to be modified.
+This approach reduces maintenance effort and prevents inconsistencies that can occur when workflow rules are duplicated throughout the application.
+
+## Lifetime Misconfiguration
+
+I enabled build-time dependency injection validation using ValidateScopes and ValidateOnBuild.
+To verify that the validation was working correctly, I deliberately introduced a lifetime mismatch by registering a service as a Singleton while it depended on a Scoped repository.
+When I ran the application, it failed during startup with an error similar to "Cannot consume scoped service 'IApplicationRepository' from singleton 'IApplicationService'."
+This occurred because a Singleton object is created once for the lifetime of the application, whereas a Scoped object is created once per HTTP request.
+If the dependency injection container allowed a Singleton to hold a Scoped dependency, the Singleton would retain a reference to the first request's Scoped instance. As a result, subsequent requests would incorrectly reuse that same instance, potentially causing stale state, threading issues, and unexpected behaviour.
+To resolve the issue, I changed the service registration from Singleton to Scoped so that its lifetime matched the repository and DbContext dependencies.
+After correcting the registration, the application started successfully and the dependency injection validation passed without errors.
