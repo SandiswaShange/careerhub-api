@@ -34,7 +34,7 @@ builder.Services.AddDbContext<JobListingDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Scalar (API docs UI)
-builder.Services.AddOpenApi(); // required for Scalar in modern .NET templates
+builder.Services.AddOpenApi();
 builder.Services.AddCors(options =>
     {
      options.AddPolicy("AuthorizationPolicy", policy =>

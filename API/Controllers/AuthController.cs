@@ -42,7 +42,7 @@ public class AuthController : ControllerBase
         var jwtSecretKey = _configuration["Jwt:SecretKey"];
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(jwtSecretKey!)
-        );
+        );  
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
 //=======================================================Step 4: Construct and sign the token===================================================
