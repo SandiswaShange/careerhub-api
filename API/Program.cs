@@ -5,14 +5,21 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
-using CareerHub.Data;
+using API.Services;
+using API.Data;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();//assignemnt 4.3
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(
+    new WebApplicationOptions());
+
+builder.Host.UseDefaultServiceProvider(options =>
+{
+    options.ValidateScopes = true;
+    options.ValidateOnBuild = true;
+});
 
 builder.Host.UseSerilog();
 
@@ -27,7 +34,7 @@ builder.Services.AddDbContext<JobListingDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Scalar (API docs UI)
-builder.Services.AddOpenApi(); // required for Scalar in modern .NET templates
+builder.Services.AddOpenApi();
 builder.Services.AddCors(options =>
     {
      options.AddPolicy("AuthorizationPolicy", policy =>
@@ -51,6 +58,8 @@ builder.Services.AddCors(options =>
         };
     });
     builder.Services.AddAuthorization();
+    builder.Services.AddRepositories();
+    builder.Services.AddServices();
 
 var app = builder.Build();
 

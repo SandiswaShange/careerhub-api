@@ -114,3 +114,83 @@ GET /jobs initially produced a single SQL query because no navigation properties
 
 ## Read vs write queries
 In EF, a query can either use change tracking or no tracking. A tracked query allows EF Core to monitor any changes made to the retrieved entity and automatically save those changes when SaveChanges is called. A no-tracking query is usually used for GET endpoints because it improves performance by not storing entities in the change tracker, but using it in a write operation can cause a silent data loss bug. For example, if a job listing is retrieved with AsNoTracking(), its properties are modified, and SaveChanges() is called, EF Core will not detect the changes because the entity is not being tracked. The code runs without errors, but the updates are never saved to the database. Therefore, no-tracking queries are best for read-only operations, while tracked queries should be used when data will be modified.
+
+## Boundary decision
+I will take the one repository per domain approach because each repository should be responsible for accessing and persisting its own domain object. A repository is the gateway to a specific part of the domain, not a catch-all data access class.
+IJobListingRepository will own JobListing data. ICompanyRepository will own Company data. IApplicationRepository will own Application data.
+This will keep responsibilities clear and prevents repositories from becoming large, tightly coupled classes that know about everything in the system.
+
+### Justification:
+
+If a user wants to submit an application, the system will first verify that the referenced JobListing exists.
+The flow would be:
+ApplicationService receives the request -> ApplicationService asks IJobListingRepository whether the JobListing exists -> If it does not exist, the service rejects the request and returns a 404 maybe. If it exists, the service creates the Application and saves it through IApplicationRepository.
+The query will live in IJobListingRepository because the query is about JobListing data.
+The ApplicationService owns the business rule. The IJobListingRepository only provides the data needed to enforce that rule.
+
+
+## Return types
+Returning IQueryable<T> breaks the repository abstraction because it exposes query-building and persistence concerns to the service layer, forcing the service to depend on query-provider concepts that should remain hidden inside the repository implementation
+
+## Lifetime choices
+• CareerHubDbContext - Scoped
+If registered as Transient, every injection would get a new DbContext instance, and that means changes made through one repository may not be visible to another so transactions and change tracking become inconsistent. If registered as Singleton, one DbContext is shared by all requests and that will cause memory usage to grow because tracked entities will keep adding up.
+
+• JobListingService - Scoped
+If registered as Transient the application will still work but will be inefficient because of unnecessary object creation.
+If registered as Singleton, I'll either get a DI container error, or accidentally hold onto request-specific objects across requests. A singleton cannot safely depend on scoped services.
+
+• ApplicationRepository - Scoped
+Repositories usually depend on CareerHubDbContext, which is scoped. Since it uses a scoped DbContext, it should also be scoped.
+If registered as Transient it often works because each repository instance receives the same scoped DbContext for the current request, but unnecessary repository instances are created so there's no real benefit. If registered as Singleton it's very problematic because a singleton repository would hold a reference to a scoped DbContext. One of the problems would be lifetime mismatch.
+
+• ApplicationStatusCache - Singleton
+Making it a singleton will allow for fast access and minimal memory usage since one copy will be shared across the entire application.
+If registered as Transient every injection will create a new cache and just waste memory. If registered as Scoped a new cache will be created per request causing cache contents to be duplicated every request and reducing performance which defeats the purpose of a cache.
+
+## Status transitions
+The validation belongs in the Domain layer because status transitions are business rules that define valid behavior of an Application. Putting the rule in the controller is wrong because controllers should handle HTTP concerns, the logic gets duplicated across entry points, and it can be bypassed. Putting the rule in the repository is wrong because repositories are responsible for persistence, not business decisions. Mixing workflow validation into data access violates separation of concerns and makes the repository harder to maintain and reuse.
+
+## What the Controller Lost
+During the refactor, all business logic and data access logic were removed from the controllers. The controllers now perform only three responsibilities: receive the HTTP request, call a service method, and return an HTTP response.
+
+### Logic moved to the Repository Layer
+* Retrieving active job listings from the database.
+* Retrieving a single job listing and its related application data.
+* Checking whether a job listing exists and whether it's still open for applications.
+* Checking whether an applicant has already applied to a listing.
+* Creating, updating, and closing job listings.
+* Creating and updating applications.
+
+Repositories are the correct location because they are responsible for data access and are the only layer that should interact with EF Core and the DbContext.
+
+### Logic moved to the Service Layer
+* Verifying that a company exists before creating a listing.
+* Ensuring a listing's closing date is in the future.
+* Preventing updates to closed listings.
+* Preventing duplicate applications.
+* Validating application status transitions.
+* Ensuring applicants can only withdraw their own applications.
+* Throwing domain-specific exceptions when business rules are violated.
+
+Services are the correct location because these rules represent business behaviour rather than HTTP handling or database access.
+
+### Result of the Refactor
+The controllers are now much easier to understand becaues they have less code. Business rules can be reused from other parts of the application without requiring an HTTP request, and data access concerns are isolated behind repository interfaces.
+
+## Status Transition Design
+I implemented the application workflow using a dedicated status transition rules component that defines all valid transitions in a single location.
+Instead of using multiple switch statements or nested if else blocks throughout the codebase, the valid transitions are stored in a central collection and queried whenever a status update is requested.
+When the ApplicationService receives a request to change an application's status, it calls the transition validation component to determine whether the requested transition is allowed. This validation occurs entirely in memory and does not require a database query.
+If the business later decides to allow a transition like "Offered → Accepted", only a single entry needs to be added to the transition rule definition. No service methods, controllers, repositories, or additional conditional logic need to be modified.
+This approach reduces maintenance effort and prevents inconsistencies that can occur when workflow rules are duplicated throughout the application.
+
+## Lifetime Misconfiguration
+
+I enabled build-time dependency injection validation using ValidateScopes and ValidateOnBuild.
+To verify that the validation was working correctly, I deliberately introduced a lifetime mismatch by registering a service as a Singleton while it depended on a Scoped repository.
+When I ran the application, it failed during startup with an error similar to "Cannot consume scoped service 'IApplicationRepository' from singleton 'IApplicationService'."
+This occurred because a Singleton object is created once for the lifetime of the application, whereas a Scoped object is created once per HTTP request.
+If the dependency injection container allowed a Singleton to hold a Scoped dependency, the Singleton would retain a reference to the first request's Scoped instance. As a result, subsequent requests would incorrectly reuse that same instance, potentially causing stale state, threading issues, and unexpected behaviour.
+To resolve the issue, I changed the service registration from Singleton to Scoped so that its lifetime matched the repository and DbContext dependencies.
+After correcting the registration, the application started successfully and the dependency injection validation passed without errors.
