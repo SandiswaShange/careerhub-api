@@ -16,7 +16,19 @@ public class JobListingDbContext(DbContextOptions<JobListingDbContext> options):
 
         modelBuilder.Entity<JobListing>(entity =>
         {
-        entity.ToTable("job_listings");
+        entity.ToTable("job_listings", t =>{
+        t.HasCheckConstraint(
+        "ck_job_listings_min_salary_positive",
+        "\"MinSalary\" IS NULL OR \"MinSalary\" > 0");
+
+        t.HasCheckConstraint(
+        "ck_job_listings_salary_range",
+        "\"MinSalary\" IS NULL OR \"MaxSalary\" IS NULL OR \"MaxSalary\" > \"MinSalary\"");
+
+        t.HasCheckConstraint(
+        "ck_job_listings_closing_after_posted",
+        "\"ClosingDate\" > \"PostedAt\"");
+        });
         entity.HasKey(j => j.Id);
 
         entity.Property(j => j.Id).ValueGeneratedNever();
@@ -30,6 +42,10 @@ public class JobListingDbContext(DbContextOptions<JobListingDbContext> options):
         entity.Property(j => j.Location).IsRequired().HasMaxLength(100);
         
         entity.Property(j => j.ClosingDate).IsRequired();
+
+        // CHECK CONSTRAINTS
+
+       
     });
 
 //=======================================================Company entity===============================================================
@@ -67,7 +83,12 @@ public class JobListingDbContext(DbContextOptions<JobListingDbContext> options):
 //=======================================================Application entity===============================================================
     modelBuilder.Entity<Application>(entity =>
     {
-    entity.ToTable("applications");
+    entity.ToTable("applications", t =>
+    {
+        t.HasCheckConstraint(
+        "ck_applications_submitted_not_future",
+        "\"SubmittedAt\" <= CURRENT_TIMESTAMP");
+    });
     
     // composite key of JobListingId and ApplicantId
     entity.HasKey(a => new 
@@ -83,8 +104,7 @@ public class JobListingDbContext(DbContextOptions<JobListingDbContext> options):
     entity.Property(a => a.Status).IsRequired();
 
     entity.Property(a => a.SubmittedAt).IsRequired();
-    });
-
+});
 //=======================================================Relationships===============================================================
     modelBuilder.Entity<JobListing>()
     .HasOne(j => j.Company)
