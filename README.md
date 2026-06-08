@@ -194,3 +194,21 @@ This occurred because a Singleton object is created once for the lifetime of the
 If the dependency injection container allowed a Singleton to hold a Scoped dependency, the Singleton would retain a reference to the first request's Scoped instance. As a result, subsequent requests would incorrectly reuse that same instance, potentially causing stale state, threading issues, and unexpected behaviour.
 To resolve the issue, I changed the service registration from Singleton to Scoped so that its lifetime matched the repository and DbContext dependencies.
 After correcting the registration, the application started successfully and the dependency injection validation passed without errors.
+
+## Constraint Placement
+
+The service layer validates that SalaryMin is less than SalaryMax when a job listing is created or updated. However, service-layer validation can be bypassed if data is inserted directly into the database using SQL scripts, migration scripts, or another application that accesses the same database. In those situations, the service code is never executed.
+Without a database-level check constraint, invalid salary ranges could be stored permanently. This would lead to inconsistent data or inaccurate search results. A database constraint ensures the rule is enforced regardless of how the data enters the system.
+
+## Index column ordering
+For the query WHERE CompanyId = X AND Status = 'Active', the index should be (CompanyId, Status)
+PostgreSQL uses the leftmost column of a composite index first. Since the query always filters by CompanyId, placing it first allows PostgreSQL to quickly locate rows belonging to a specific company before applying the Status filter.
+
+For the query WHERE Status = 'Active' AND ExpiresAt < @threshold, the index should be (Status, ExpiresAt)
+This allows PostgreSQL to first identify active listings and then efficiently evaluate the expiry date condition.
+
+If a query filters only on a non-leftmost column, PostgreSQL generally cannot fully utilize the composite index. For example, an index on (CompanyId, Status) is useful for queries filtering by CompanyId, but a query filtering only by Status may require a sequential scan because the leftmost column is not included in the predicate.
+
+## Identifying Hot Paths
+GetActiveListingsAsync() is a hot path because it powers the public job board. Every time a user visits the jobs page, refreshes the page, or navigates between pages of listings, this query executes. Since job browsing is one of the primary functions of CareerHub, this method is expected to be called far more frequently than administrative operations such as creating, updating, or closing listings. Using a compiled query reduces the repeated cost of translating the same LINQ expression into SQL and can improve performance under heavy traffic.
+HasApplicantAppliedAsync() is a hot path because it is executed every time a user submits an application. Before creating a new application, the system must check whether the applicant has already applied for the same listing. In a production environment, this validation occurs on every application submission, making it one of the most frequently executed queries in the application. A compiled query reduces query compilation overhead for this repeated existence check.

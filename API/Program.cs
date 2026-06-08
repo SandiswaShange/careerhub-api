@@ -30,7 +30,7 @@ builder.Services.AddProblemDetails(); // enables standard RFC7807 Problem Detail
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();//assignemnt 4.3
 
 builder.Services.AddDbContext<JobListingDbContext>(options =>
-    options.UseSqlite(
+    options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Scalar (API docs UI)
