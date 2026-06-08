@@ -1,5 +1,6 @@
 using API.Models;
 using Microsoft.EntityFrameworkCore;
+using NpgsqlTypes;
 
 namespace API.Data;
 
@@ -43,9 +44,22 @@ public class JobListingDbContext(DbContextOptions<JobListingDbContext> options):
         
         entity.Property(j => j.ClosingDate).IsRequired();
 
-        // CHECK CONSTRAINTS
+        //indexes
+        entity.HasIndex(j => new { j.IsActive, j.ClosingDate }).HasDatabaseName("ix_job_listings_isactive_closingdate");
+        entity.HasIndex(j => new { j.CompanyId, j.IsActive }).HasDatabaseName("ix_job_listings_companyid_isactive");
+        
+        //search vector
+        entity.Property<NpgsqlTypes.NpgsqlTsVector>("SearchVector")
+        .HasComputedColumnSql(
+        @"to_tsvector(
+            'english',
+            coalesce(""Title"", '') || ' ' ||
+            coalesce(""Description"", '')
+        )",
+        stored: true);
 
-       
+        //GIN index
+        entity.HasIndex("SearchVector").HasMethod("GIN").HasDatabaseName("ix_job_listings_searchvector");
     });
 
 //=======================================================Company entity===============================================================
@@ -104,6 +118,17 @@ public class JobListingDbContext(DbContextOptions<JobListingDbContext> options):
     entity.Property(a => a.Status).IsRequired();
 
     entity.Property(a => a.SubmittedAt).IsRequired();
+
+   //
+   entity.HasIndex(a => new
+    {
+        a.ApplicantId,
+        a.JobListingId
+    })
+    .HasDatabaseName("ix_applications_applicantid_joblistingid");
+
+    entity.HasIndex(a => a.JobListingId)
+        .HasDatabaseName("ix_applications_joblistingid"); 
 });
 //=======================================================Relationships===============================================================
     modelBuilder.Entity<JobListing>()

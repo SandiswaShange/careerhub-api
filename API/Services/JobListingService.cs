@@ -147,4 +147,9 @@ public class JobListingService(IJobListingRepository jobRepository,ICompanyRepos
 
     return "Salary not specified";
 }
+
+    public async Task<IEnumerable<JobListResponse>> SearchAsync(string searchTerm)
+    {
+       return await _jobRepository.SearchAsync(searchTerm);
+    }
 }

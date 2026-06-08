@@ -3,18 +3,20 @@ using System;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using NpgsqlTypes;
 
 #nullable disable
 
 namespace API.Migrations
 {
     [DbContext(typeof(JobListingDbContext))]
-    partial class JobListingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260608225016_AddJobListingAndApplicationIndexes")]
+    partial class AddJobListingAndApplicationIndexes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -130,11 +132,6 @@ namespace API.Migrations
                     b.Property<DateTime>("PostedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<NpgsqlTsVector>("SearchVector")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("tsvector")
-                        .HasComputedColumnSql("to_tsvector(\r\n            'english',\r\n            coalesce(\"Title\", '') || ' ' ||\r\n            coalesce(\"Description\", '')\r\n        )", true);
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -144,11 +141,6 @@ namespace API.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SearchVector")
-                        .HasDatabaseName("ix_job_listings_searchvector");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "GIN");
 
                     b.HasIndex("CompanyId", "IsActive")
                         .HasDatabaseName("ix_job_listings_companyid_isactive");

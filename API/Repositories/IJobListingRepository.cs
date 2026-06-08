@@ -17,4 +17,5 @@ public interface IJobListingRepository
     Task UpdateAsync(JobListing listing);
 
     Task CloseAsync(Guid listingId);
+    Task<IEnumerable<JobListResponse>> SearchAsync(string searchTerm);
 }

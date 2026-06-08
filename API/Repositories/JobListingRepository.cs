@@ -33,7 +33,9 @@ public class JobListingRepository(JobListingDbContext db) : IJobListingRepositor
     {
         return await _db.JobListings
         .AsNoTracking()
-        .Where(j => j.IsActive)
+        .Where(j =>
+        j.IsActive &&
+        j.ClosingDate > DateTime.UtcNow)
         .Select(j => new JobListResponse(
             j.Id,
             j.Title,
@@ -95,6 +97,32 @@ public class JobListingRepository(JobListingDbContext db) : IJobListingRepositor
     {
         return await _db.JobListings
         .AnyAsync(j => j.Id == listingId);
+    }
+
+    public async Task<IEnumerable<JobListResponse>> SearchAsync(string searchTerm)
+    {
+        return await _db.JobListings
+        .AsNoTracking()
+        .Where(j =>
+            j.IsActive &&
+            j.ClosingDate > DateTime.UtcNow)
+        .Where(j =>
+            EF.Functions.ToTsVector(
+                "english",
+                j.Title + " " + j.Description)
+            .Matches(
+                EF.Functions.PlainToTsQuery(
+                    "english",
+                    searchTerm)))
+        .Select(j => new JobListResponse(
+            j.Id,
+            j.Title,
+            j.Company.Name,
+            j.Location,
+            j.Type,
+            j.Applications.Count()
+        ))
+        .ToListAsync();
     }
 
     public async Task UpdateAsync(JobListing listing)
