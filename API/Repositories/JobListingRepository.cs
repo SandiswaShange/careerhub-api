@@ -31,20 +31,7 @@ public class JobListingRepository(JobListingDbContext db) : IJobListingRepositor
 
     public async Task<IEnumerable<JobListResponse>> GetActiveListingsAsync()
     {
-        return await _db.JobListings
-        .AsNoTracking()
-        .Where(j =>
-        j.IsActive &&
-        j.ClosingDate > DateTime.UtcNow)
-        .Select(j => new JobListResponse(
-            j.Id,
-            j.Title,
-            j.Company.Name,
-            j.Location,
-            j.Type,
-            j.Applications.Count()
-        ))
-        .ToListAsync();
+      return await _activeListingsQuery(_db).ToListAsync();   
     }
 
     public async Task<JobListing?> GetByIdAsync(Guid listingId)
@@ -131,4 +118,25 @@ public class JobListingRepository(JobListingDbContext db) : IJobListingRepositor
 
     await _db.SaveChangesAsync();
     }
+
+//=================================================================================================================================
+private static readonly Func<
+    JobListingDbContext,
+    IAsyncEnumerable<JobListResponse>>
+    _activeListingsQuery =
+        EF.CompileAsyncQuery(
+            (JobListingDbContext db) =>
+                db.JobListings
+                    .AsNoTracking()
+                    .Where(j =>
+                        j.IsActive &&
+                        j.ClosingDate > DateTime.UtcNow)
+                    .Select(j =>
+                        new JobListResponse(
+                            j.Id,
+                            j.Title,
+                            j.Company.Name,
+                            j.Location,
+                            j.Type,
+                            j.Applications.Count())));
 }

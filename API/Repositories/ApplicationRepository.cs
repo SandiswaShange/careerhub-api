@@ -66,4 +66,18 @@ public class ApplicationRepository(JobListingDbContext db): IApplicationReposito
 
         await _db.SaveChangesAsync();
     }
+//==================================================================================================================================
+private static readonly Func<
+    JobListingDbContext,
+    Guid,
+    Guid,
+    Task<bool>>
+    _hasAppliedQuery =
+        EF.CompileAsyncQuery(
+            (JobListingDbContext db,
+             Guid applicantId,
+             Guid listingId) =>
+                db.Applications.Any(a =>
+                    a.ApplicantId == applicantId &&
+                    a.JobListingId == listingId));
 }
