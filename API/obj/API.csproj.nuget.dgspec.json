@@ -1,31 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\sandi\\Documents\\Bitcube Assignments\\CareerHub-API\\careerhub-api\\api\\API.csproj": {}
+    "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\sandi\\Documents\\Bitcube Assignments\\CareerHub-API\\careerhub-api\\api\\API.csproj": {
+    "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\sandi\\Documents\\Bitcube Assignments\\CareerHub-API\\careerhub-api\\api\\API.csproj",
+        "projectUniqueName": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\API.csproj",
         "projectName": "API",
-        "projectPath": "C:\\Users\\sandi\\Documents\\Bitcube Assignments\\CareerHub-API\\careerhub-api\\api\\API.csproj",
-        "packagesPath": "C:\\Users\\sandi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\sandi\\Documents\\Bitcube Assignments\\CareerHub-API\\careerhub-api\\api\\obj\\",
+        "projectPath": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\API.csproj",
+        "packagesPath": "C:\\Users\\Sandi\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\sandi\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\Sandi\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
