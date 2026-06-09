@@ -17,6 +17,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IJobListingService,JobListingService>();
         services.AddScoped<IApplicationService,ApplicationService>();
         services.AddSingleton<ApplicationStatusRules>();
+        services.AddSingleton<SlowQueryInterceptor>();
         return services;
     }
 }
