@@ -152,4 +152,9 @@ public class JobListingService(IJobListingRepository jobRepository,ICompanyRepos
     {
         return await _jobRepository.GetActiveListingsPagedAsync(companyId,page,pageSize, filter);
     }
+
+    public async Task<JobResponse> PatchAsync(Guid listingId, UpdateJobListingRequest request)
+    {
+        return await _jobRepository.PatchAsync(listingId, request);
+    }
 }
