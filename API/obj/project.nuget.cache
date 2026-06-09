@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "X/AfLdlukMI=",
+  "dgSpecHash": "v/IFyLwciaU=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\api\\API.csproj",
+  "projectFilePath": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Sandi\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Sandi\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\10.0.8\\microsoft.aspnetcore.authentication.jwtbearer.10.0.8.nupkg.sha512",
