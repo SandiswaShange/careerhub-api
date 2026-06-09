@@ -42,17 +42,17 @@ public class ApplicationsController(IApplicationService service): ControllerBase
         return Ok(applications);
     }
 
-    [HttpDelete("{listingId:guid}/{applicantId:guid}")]
-    public async Task<IActionResult>
-        WithdrawApplicationAsync(
-            Guid listingId,
-            Guid applicantId)
+    [HttpPatch("{applicantId:guid}/{listingId:guid}/status")]
+    [Authorize(Roles = "Employer")]
+    public async Task<IActionResult> UpdateStatusAsync(
+        Guid applicantId,
+        Guid listingId,
+        [FromBody] UpdateApplicationStatusRequest request)
     {
-        await _service.WithdrawApplicationAsync(
+        await _service.UpdateStatusAsync(
             applicantId,
             listingId,
-            applicantId);
-
-        return NoContent();
-}
+            request.Status);
+        return Ok();
+    }
 }

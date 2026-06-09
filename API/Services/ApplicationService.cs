@@ -110,4 +110,31 @@ public class ApplicationService(IApplicationRepository applicationRepository,IJo
     await _applicationRepository.RemoveAsync(
         application);
     }
+    //============================================================================================================================
+    private static bool IsValidTransition(ApplicationStatus current,ApplicationStatus next)
+    {
+        return current switch
+        {
+            ApplicationStatus.Submitted =>
+                next is
+                    ApplicationStatus.UnderReview
+                    or ApplicationStatus.Rejected,
+
+            ApplicationStatus.UnderReview =>
+                next is
+                    ApplicationStatus.Shortlisted
+                    or ApplicationStatus.Rejected,
+
+            ApplicationStatus.Shortlisted =>
+                next is
+                    ApplicationStatus.Offered
+                    or ApplicationStatus.Rejected,
+
+            ApplicationStatus.Rejected => false,
+
+            ApplicationStatus.Offered => false,
+
+            _ => false
+        };
+    }
 }
