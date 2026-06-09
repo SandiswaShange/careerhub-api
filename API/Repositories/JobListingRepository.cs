@@ -119,8 +119,38 @@ public class JobListingRepository(JobListingDbContext db) : IJobListingRepositor
     await _db.SaveChangesAsync();
     }
 
-//=================================================================================================================================
-private static readonly Func<
+    public async Task<IEnumerable<JobListingStatsResponse>> GetApplicationStatsAsync(Guid companyId)
+    {
+       FormattableString sql = $$"""
+        SELECT
+        jl."Id" AS "ListingId",
+        jl."Title" AS "Title",
+
+        COUNT(*) FILTER (WHERE a."Status" = 'Submitted') AS "SubmittedCount",
+        COUNT(*) FILTER (WHERE a."Status" = 'UnderReview') AS "UnderReviewCount",
+        COUNT(*) FILTER (WHERE a."Status" = 'Shortlisted') AS "ShortlistedCount",
+        COUNT(*) FILTER (WHERE a."Status" = 'Rejected') AS "RejectedCount",
+        COUNT(*) FILTER (WHERE a."Status" = 'Offered') AS "OfferedCount",
+
+        COUNT(a."Id") AS "TotalApplications",
+
+        RANK() OVER (ORDER BY COUNT(a."Id") DESC) AS "Rank"
+
+        FROM "JobListings" jl
+        LEFT JOIN "Applications" a
+        ON a."JobListingId" = jl."Id"
+
+        WHERE jl."CompanyId" = {companyId}
+        AND jl."IsActive" = true
+
+        GROUP BY jl."Id", jl."Title";
+        """;
+
+    return await _db.Database.SqlQuery<JobListingStatsResponse>(sql).ToListAsync();
+    }
+
+    //=================================================================================================================================
+    private static readonly Func<
     JobListingDbContext,
     IAsyncEnumerable<JobListResponse>>
     _activeListingsQuery =

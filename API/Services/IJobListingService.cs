@@ -12,4 +12,4 @@ public interface IJobListingService
 
     Task CloseListingAsync(Guid listingId);
     Task<IEnumerable<JobListResponse>> SearchAsync(string searchTerm);
-}
+Task<IEnumerable<JobListingStatsResponse>> GetApplicationStatsAsync(Guid companyId);}
