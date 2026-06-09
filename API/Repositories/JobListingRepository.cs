@@ -34,6 +34,104 @@ public class JobListingRepository(JobListingDbContext db) : IJobListingRepositor
       return await _activeListingsQuery(_db).ToListAsync();   
     }
 
+    public async Task<PagedResponse<JobListResponse>> GetActiveListingsPagedAsync(Guid companyId, int page, int pageSize, JobListingFilterQuery filter)
+    {
+        var query = _db.JobListings
+        .AsNoTracking()
+        .Where(j =>
+        j.IsActive &&
+        j.ClosingDate > DateTime.UtcNow);
+
+        //Location Filter
+        if (!string.IsNullOrWhiteSpace(filter.Location))
+        {
+            query = query.Where(j =>
+            j.Location.ToLower()
+            .Contains(filter.Location.ToLower()));
+        }
+
+        //Employment Type Filter
+        if (!string.IsNullOrWhiteSpace(filter.Location))
+        {
+            query = query.Where(j =>
+                j.Location.ToLower()
+                    .Contains(filter.Location.ToLower()));
+        }
+
+        //Salary Min
+        if (filter.SalaryMin.HasValue)
+        {
+            query = query.Where(j =>
+                j.MinSalary >= filter.SalaryMin);
+        }
+
+        //Salary Max
+        if (filter.SalaryMax.HasValue)
+        {
+            query = query.Where(j =>
+                j.MaxSalary <= filter.SalaryMax);
+        }
+
+        //Company FIlter
+        if (filter.CompanyId.HasValue)
+        {
+            query = query.Where(j =>
+                j.CompanyId == filter.CompanyId);
+        }
+
+        // Sorting
+    query = filter.Sort.ToLower() switch
+    {
+        "salarymin" =>
+            filter.Dir == "desc"
+                ? query.OrderByDescending(j => j.MinSalary)
+                : query.OrderBy(j => j.MinSalary),
+
+        "salarymax" =>
+            filter.Dir == "asc"
+                ? query.OrderBy(j => j.MaxSalary)
+                : query.OrderByDescending(j => j.MaxSalary),
+
+        "title" =>
+            filter.Dir == "desc"
+                ? query.OrderByDescending(j => j.Title)
+                : query.OrderBy(j => j.Title),
+
+        _ =>
+            filter.Dir == "asc"
+                ? query.OrderBy(j => j.PostedAt)
+                : query.OrderByDescending(j => j.PostedAt)
+    };  
+
+        var totalCount = await query.CountAsync();
+
+        var listings = await query
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .Select(j => new JobListResponse(
+            j.Id,
+            j.Title,
+            j.Company.Name,
+            j.Location,
+            j.Type,
+            j.Applications.Count()
+        ))
+        .ToListAsync();
+
+        var totalPages =
+        (int)Math.Ceiling(totalCount / (double)pageSize);
+
+        return new PagedResponse<JobListResponse>(
+        listings,
+        page,
+        pageSize,
+        totalCount,
+        totalPages,
+        page < totalPages,
+        page > 1
+    );
+    }
+
     public async Task<JobListing?> GetByIdAsync(Guid listingId)
     {
           return await _db.JobListings

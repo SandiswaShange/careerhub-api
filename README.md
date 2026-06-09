@@ -212,3 +212,32 @@ If a query filters only on a non-leftmost column, PostgreSQL generally cannot fu
 ## Identifying Hot Paths
 GetActiveListingsAsync() is a hot path because it powers the public job board. Every time a user visits the jobs page, refreshes the page, or navigates between pages of listings, this query executes. Since job browsing is one of the primary functions of CareerHub, this method is expected to be called far more frequently than administrative operations such as creating, updating, or closing listings. Using a compiled query reduces the repeated cost of translating the same LINQ expression into SQL and can improve performance under heavy traffic.
 HasApplicantAppliedAsync() is a hot path because it is executed every time a user submits an application. Before creating a new application, the system must check whether the applicant has already applied for the same listing. In a production environment, this validation occurs on every application submission, making it one of the most frequently executed queries in the application. A compiled query reduces query compilation overhead for this repeated existence check.
+
+## Pagination Strategy
+
+The CareerHub job board will use offset pagination with Skip and Take.
+Offset pagination can produce inconsistent results when new listings are added between requests. For example, a user may load page 1, a new job is posted, and then page 2 is requested. Because the new listing shifts the ordering, a listing may appear twice or be skipped between pages.
+For a job board this trade-off is acceptable because listings are not changing rapidly enough for occasional page shifts to create a significant user experience problem. Offset pagination is also simpler to implement, easier for frontend developers to consume, and supports direct navigation to a specific page number.
+Cursor pagination would provide stronger consistency but would add unnecessary complexity for the CareerHub use case.
+
+## PATCH vs PUT
+
+A race condition can occur when two recruiters edit the same job listing at the same time.
+For example, two recruiters open the same listing. One changes the salary and submits a PUT request containing the entire listing. The other changes only the description but submits their PUT request later using an older copy of the listing. Because PUT replaces the entire resource, the other person's request overwrites the first pereson's salary change with the outdated salary value from their copy of the listing. The salary update is silently lost.
+PATCH reduces this problem because only the fields supplied in the request are modified. If Recruiter A sends a PATCH containing only salary information and Recruiter B sends a PATCH containing only the description, both changes can be applied without overwriting unrelated fields. Null values are interpreted as "leave unchanged", so existing data is preserved.
+
+## Versioning Strategy
+
+A breaking change is a change that causes existing clients to stop working without modification. An example of a breaking change in CareerHub would be renaming the Title property in JobListingResponse to JobTitle. Existing frontend code expecting Title would fail.
+A non-breaking change is a change that does not require existing clients to be updated. An example would be adding a new optional field such as ApplicationCount to JobListingResponse. Existing clients can ignore the new field and continue functioning normally.
+AssumeDefaultVersionWhenUnspecified = true causes requests that do not specify an API version to automatically use the default version, which is v1. This is required to keep existing clients working after versioning is introduced because clients currently call endpoints without a version segment in the URL.
+
+## Rate Limiting Algorithm
+
+The application submission endpoint will use a fixed window rate limiter.
+A fixed window algorithm counts requests within a defined time period and rejects requests once the limit is reached. It is simple to configure and understand, making it suitable for protecting application submissions.
+A known weakness of fixed window rate limiting is burst behaviour. A client can send requests at the end of one window and immediately send more requests at the start of the next window, effectively creating a temporary burst.
+For the application submission endpoint this limitation is acceptable because the limit is low and the window duration is long. The primary goal is to prevent automated spam and abuse rather than enforce perfectly smooth traffic patterns. The simplicity of fixed window rate limiting outweighs the impact of occasional bursts in this scenario.
+
+##  AllowAnyOrigin() combined with AllowCredentials() 
+AllowAnyOrigin() cannot be combined with AllowCredentials() because browsers would otherwise send credentials such as cookies or authorization tokens to every origin on the internet. ASP.NET Core prevents this configuration and throws an exception at startup because it would create a serious security vulnerability.

@@ -10,13 +10,18 @@ public class JobsController(IJobListingService service) : ControllerBase
 {
     private readonly IJobListingService _service = service;
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<JobListResponse>>>
-        GetListingsAsync()
+    [HttpGet("company/{companyId:guid}")]
+    public async Task<ActionResult<PagedResponse<JobListResponse>>>
+    GetCompanyListingsAsync(
+        Guid companyId,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20)
     {
-        var jobs = await _service.GetActiveListingsAsync();
+    var result = await _service.GetActiveListingsPagedAsync(companyId,page,pageSize);
 
-        return Ok(jobs);
+    Response.Headers.Append("X-Total-Count",result.TotalCount.ToString());
+
+    return Ok(result);
     }
 
     [HttpGet("{id:guid}")]
