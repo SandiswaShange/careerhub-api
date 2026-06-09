@@ -1,10 +1,13 @@
 using API.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Asp.Versioning;
 
 namespace API.Controllers;
+
 [ApiController]
-[Route("applications")]
+[ApiVersion(1.0)]
+[Route("api/v{version:apiVersion}/applications")]
 public class ApplicationsController(IApplicationService service): ControllerBase
 {
     private readonly IApplicationService _service = service;

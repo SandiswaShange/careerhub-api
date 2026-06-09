@@ -1,11 +1,13 @@
 using API.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Asp.Versioning;
 
 namespace API.Controllers;
 
 [ApiController]
-[Route("jobs")]
+[ApiVersion(1.0)]
+[Route("api/v{version:apiVersion}/jobs")]
 public class JobsController(IJobListingService service) : ControllerBase
 {
     private readonly IJobListingService _service = service;

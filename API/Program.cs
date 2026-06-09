@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using API.Services;
 using API.Data;
+using Asp.Versioning;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -65,6 +66,15 @@ builder.Services.AddCors(options =>
     builder.Services.AddAuthorization();
     builder.Services.AddRepositories();
     builder.Services.AddServices();
+
+    builder.Services.AddApiVersioning(options =>
+    {
+        options.DefaultApiVersion = new ApiVersion(1, 0);
+
+        options.AssumeDefaultVersionWhenUnspecified = true;
+
+        options.ReportApiVersions = true;
+    });
 
 var app = builder.Build();
 

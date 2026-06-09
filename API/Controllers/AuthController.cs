@@ -5,13 +5,14 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using API.DTOs;
-using API.Exceptions;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion(1.0)]
+[Route("api/v{version:apiVersion}/authorization")]
 public class AuthController : ControllerBase
 {
     private readonly IConfiguration _configuration;
