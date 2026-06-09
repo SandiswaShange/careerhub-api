@@ -36,12 +36,17 @@ builder.Services.AddDbContext<JobListingDbContext>(options =>
 // Scalar (API docs UI)
 builder.Services.AddOpenApi();
 builder.Services.AddCors(options =>
+     options.AddPolicy("FrontendPolicy", policy =>
     {
-     options.AddPolicy("AuthorizationPolicy", policy =>
-     {
-        policy.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
-     }); 
-    });
+        policy.WithOrigins(
+                "http://localhost:3000",
+                "https://careerhub.example.com")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+            .WithExposedHeaders("X-Total-Count");
+    })
+    );
     var jwtSecretKey = builder.Configuration["Jwt:SecretKey"];
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
