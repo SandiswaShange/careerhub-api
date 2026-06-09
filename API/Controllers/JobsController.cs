@@ -1,11 +1,13 @@
 using API.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Asp.Versioning;
 
 namespace API.Controllers;
 
 [ApiController]
-[Route("jobs")]
+[ApiVersion(1.0)]
+[Route("api/v{version:apiVersion}/jobs")]
 public class JobsController(IJobListingService service) : ControllerBase
 {
     private readonly IJobListingService _service = service;
@@ -14,10 +16,12 @@ public class JobsController(IJobListingService service) : ControllerBase
     public async Task<ActionResult<PagedResponse<JobListResponse>>>
     GetCompanyListingsAsync(
         Guid companyId,
+        JobListingFilterQuery filter,
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 20)
+        [FromQuery] int pageSize = 20
+        )
     {
-    var result = await _service.GetActiveListingsPagedAsync(companyId,page,pageSize);
+    var result = await _service.GetActiveListingsPagedAsync(companyId,page,pageSize, filter);
 
     Response.Headers.Append("X-Total-Count",result.TotalCount.ToString());
 
@@ -25,18 +29,25 @@ public class JobsController(IJobListingService service) : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<JobDetailResponse>>
-        GetListingByIdAsync(Guid id)
+    public async Task<ActionResult<JobDetailResponse>> GetListingByIdAsync(Guid id)
     {
         var job = await _service.GetListingAsync(id);
+
+        var etag = $"\"{job.Id}-{job.PostedAt.Ticks}-{job.MinSalary}\"";
+
+    if (Request.Headers.IfNoneMatch == etag)
+    {
+        return StatusCode(StatusCodes.Status304NotModified);
+    }
+
+    Response.Headers.ETag = etag;
 
         return Ok(job);
     }
 
     [HttpPost]
     [Authorize(Roles = "Employer")]
-    public async Task<ActionResult<JobResponse>>
-        CreateJobAsync([FromBody] CreateJobRequest request)
+    public async Task<ActionResult<JobResponse>> CreateJobAsync([FromBody] CreateJobRequest request)
     {
         var job = await _service.CreateListingAsync(request);
 
@@ -60,17 +71,23 @@ public class JobsController(IJobListingService service) : ControllerBase
 
     [HttpPatch("{id:guid}/close")]
     [Authorize(Roles = "Employer")]
-    public async Task<IActionResult>
-        CloseJobAsync(Guid id)
+    public async Task<IActionResult> CloseJobAsync(Guid id)
     {
         await _service.CloseListingAsync(id);
 
         return NoContent();
     }
-
-    [HttpGet("search")]
-    public Task<IEnumerable<JobListResponse>> Search(string q)=> _service.SearchAsync(q);
-
-    [HttpGet("stats")]
-    public Task<IEnumerable<JobListingStatsResponse>> GetStats(Guid companyId)=> _service.GetApplicationStatsAsync(companyId);
+    public async Task<JobResponse> PatchAsync(Guid listingId, UpdateJobListingRequest request)
+    {
+        return await _service.PatchAsync(listingId, request);
+    }
+    
+    [HttpPatch("{id:guid}")]
+    [Authorize(Roles = "Employer")]
+    public async Task<ActionResult<JobResponse>>PatchJobAsync(Guid id,
+        [FromBody] UpdateJobListingRequest request)
+    {
+        return Ok(
+            await _service.PatchAsync(id, request));
+    }
 }

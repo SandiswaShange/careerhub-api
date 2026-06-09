@@ -1,10 +1,13 @@
 using API.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Asp.Versioning;
 
 namespace API.Controllers;
+
 [ApiController]
-[Route("applications")]
+[ApiVersion(1.0)]
+[Route("api/v{version:apiVersion}/applications")]
 public class ApplicationsController(IApplicationService service): ControllerBase
 {
     private readonly IApplicationService _service = service;
@@ -42,17 +45,17 @@ public class ApplicationsController(IApplicationService service): ControllerBase
         return Ok(applications);
     }
 
-    [HttpDelete("{listingId:guid}/{applicantId:guid}")]
-    public async Task<IActionResult>
-        WithdrawApplicationAsync(
-            Guid listingId,
-            Guid applicantId)
+    [HttpPatch("{applicantId:guid}/{listingId:guid}/status")]
+    [Authorize(Roles = "Employer")]
+    public async Task<IActionResult> UpdateStatusAsync(
+        Guid applicantId,
+        Guid listingId,
+        [FromBody] UpdateApplicationStatusRequest request)
     {
-        await _service.WithdrawApplicationAsync(
+        await _service.UpdateStatusAsync(
             applicantId,
             listingId,
-            applicantId);
-
-        return NoContent();
-}
+            request.Status);
+        return Ok();
+    }
 }

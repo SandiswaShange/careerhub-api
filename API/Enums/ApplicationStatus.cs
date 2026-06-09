@@ -4,9 +4,9 @@ public enum ApplicationStatus
 {
     Submitted,
     UnderReview,
-    InterviewSet,
+    Shortlisted,
     OfferMade,
-    Accepted,
+    Offered,
     Rejected,
     Withdrawn
 }

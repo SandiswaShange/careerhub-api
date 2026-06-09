@@ -11,5 +11,5 @@ public interface IJobListingService
     Task<JobResponse> UpdateListingAsync(Guid listingId, UpdateJobRequest dto);
 
     Task CloseListingAsync(Guid listingId);
-    Task<IEnumerable<JobListResponse>> SearchAsync(string searchTerm);
-Task<IEnumerable<JobListingStatsResponse>> GetApplicationStatsAsync(Guid companyId);}
+    Task<JobResponse> PatchAsync(Guid listingId, UpdateJobListingRequest request);
+}

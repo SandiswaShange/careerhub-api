@@ -151,6 +151,8 @@ public class JobListingRepository(JobListingDbContext db) : IJobListingRepositor
             j.Location,
             j.Type,
             j.PostedAt,
+            j.MinSalary,
+            j.MaxSalary,
             j.Applications.Select(a =>
                 new ApplicationResponse(
                     a.Applicant.FirstName + " " +
@@ -267,4 +269,71 @@ public class JobListingRepository(JobListingDbContext db) : IJobListingRepositor
                             j.Location,
                             j.Type,
                             j.Applications.Count())));
+    public async Task<JobResponse> PatchAsync(Guid listingId, UpdateJobListingRequest request)
+    {
+        var listing = await _db.JobListings
+            .Include(j => j.Company)
+            .FirstOrDefaultAsync(j => j.Id == listingId);
+
+        if (listing is null)
+        {
+            throw new JobNotFoundException(listingId);
+        }
+
+        if (request.Title is not null)
+            listing.Title = request.Title;
+
+        if (request.Description is not null)
+            listing.Description = request.Description;
+
+        if (request.Location is not null)
+            listing.Location = request.Location;
+
+        if (request.Type.HasValue)
+            listing.Type = request.Type.Value;
+
+        if (request.SalaryMin.HasValue)
+            listing.MinSalary = request.SalaryMin.Value;
+
+        if (request.SalaryMax.HasValue)
+            listing.MaxSalary = request.SalaryMax.Value;
+
+        if (request.ClosingDate.HasValue)
+        {
+            if (request.ClosingDate <= DateTime.UtcNow)
+            {
+                throw new ArgumentException(
+                    "Closing date must be in the future.");
+            }
+
+            listing.ClosingDate =
+                request.ClosingDate.Value;
+        }
+
+        if (listing.MinSalary.HasValue &&
+            listing.MaxSalary.HasValue &&
+            listing.MinSalary > listing.MaxSalary)
+        {
+            throw new ArgumentException(
+                "Minimum salary cannot exceed maximum salary.");
+        }
+
+        await _db.SaveChangesAsync();
+
+        return new JobResponse(
+            listing.Id,
+            listing.Title,
+            listing.Description,
+            listing.Company.Name,
+            listing.Location,
+            listing.Type,
+            listing.PostedAt,
+            listing.IsActive,
+            listing.MinSalary ?? 0,
+            listing.MaxSalary ?? 0,
+            listing.MinSalary.HasValue && listing.MaxSalary.HasValue
+                ? $"R{listing.MinSalary} - R{listing.MaxSalary}/month"
+                : "Salary not specified"
+        );
+    }
 }

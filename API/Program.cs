@@ -7,6 +7,8 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using API.Services;
 using API.Data;
+using Asp.Versioning;
+using System.Threading.RateLimiting;    
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -25,6 +27,8 @@ builder.Host.UseSerilog();
 
 // Controllers
 builder.Services.AddControllers();
+
+builder.Services.AddRateLimitingPolicies();
 
 builder.Services.AddProblemDetails(); // enables standard RFC7807 Problem Details responses
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();//assignemnt 4.3
@@ -72,6 +76,15 @@ builder.Services.AddCors(options =>
     builder.Services.AddRepositories();
     builder.Services.AddServices();
 
+    builder.Services.AddApiVersioning(options =>
+    {
+        options.DefaultApiVersion = new ApiVersion(1, 0);
+
+        options.AssumeDefaultVersionWhenUnspecified = true;
+
+        options.ReportApiVersions = true;
+    });
+
 var app = builder.Build();
 
 
@@ -93,6 +106,7 @@ app.MapScalarApiReference();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseRateLimiter();
+app.MapControllers().RequireRateLimiting("global");
 
 app.Run();

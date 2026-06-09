@@ -1,12 +1,16 @@
 {
   "version": 2,
-  "dgSpecHash": "v/IFyLwciaU=",
+  "dgSpecHash": "CZ35gKaMIIA=",
   "success": true,
   "projectFilePath": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\API.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Sandi\\.nuget\\packages\\asp.versioning.abstractions\\10.0.0\\asp.versioning.abstractions.10.0.0.nupkg.sha512",
+    "C:\\Users\\Sandi\\.nuget\\packages\\asp.versioning.http\\10.0.0\\asp.versioning.http.10.0.0.nupkg.sha512",
+    "C:\\Users\\Sandi\\.nuget\\packages\\asp.versioning.mvc\\10.0.0\\asp.versioning.mvc.10.0.0.nupkg.sha512",
     "C:\\Users\\Sandi\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\Sandi\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\10.0.8\\microsoft.aspnetcore.authentication.jwtbearer.10.0.8.nupkg.sha512",
     "C:\\Users\\Sandi\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.8\\microsoft.aspnetcore.openapi.10.0.8.nupkg.sha512",
+    "C:\\Users\\Sandi\\.nuget\\packages\\microsoft.aspnetcore.ratelimiting\\7.0.0-rc.2.22476.2\\microsoft.aspnetcore.ratelimiting.7.0.0-rc.2.22476.2.nupkg.sha512",
     "C:\\Users\\Sandi\\.nuget\\packages\\microsoft.build.framework\\18.0.2\\microsoft.build.framework.18.0.2.nupkg.sha512",
     "C:\\Users\\Sandi\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\3.11.0\\microsoft.codeanalysis.analyzers.3.11.0.nupkg.sha512",
     "C:\\Users\\Sandi\\.nuget\\packages\\microsoft.codeanalysis.common\\5.0.0\\microsoft.codeanalysis.common.5.0.0.nupkg.sha512",
@@ -51,5 +55,27 @@
     "C:\\Users\\Sandi\\.nuget\\packages\\system.composition.typedparts\\9.0.0\\system.composition.typedparts.9.0.0.nupkg.sha512",
     "C:\\Users\\Sandi\\.nuget\\packages\\system.identitymodel.tokens.jwt\\8.0.1\\system.identitymodel.tokens.jwt.8.0.1.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "message": "Problem reading the cache file C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\obj\\project.nuget.cache : '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0.",
+      "projectPath": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\API.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\API.csproj",
+      "targetGraphs": []
+    },
+    {
+      "code": "NU1510",
+      "level": "Warning",
+      "message": "PackageReference Microsoft.AspNetCore.RateLimiting will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "projectPath": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\API.csproj",
+      "warningLevel": 1,
+      "filePath": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\API.csproj",
+      "libraryId": "Microsoft.AspNetCore.RateLimiting",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
 }
