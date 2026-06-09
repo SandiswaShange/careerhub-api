@@ -62,4 +62,10 @@ public class JobsController(IJobListingService service) : ControllerBase
 
         return NoContent();
     }
+
+    [HttpGet("search")]
+    public Task<IEnumerable<JobListResponse>> Search(string q)=> _service.SearchAsync(q);
+
+    [HttpGet("stats")]
+    public Task<IEnumerable<JobListingStatsResponse>> GetStats(Guid companyId)=> _service.GetApplicationStatsAsync(companyId);
 }

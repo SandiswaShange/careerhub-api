@@ -31,18 +31,7 @@ public class JobListingRepository(JobListingDbContext db) : IJobListingRepositor
 
     public async Task<IEnumerable<JobListResponse>> GetActiveListingsAsync()
     {
-        return await _db.JobListings
-        .AsNoTracking()
-        .Where(j => j.IsActive)
-        .Select(j => new JobListResponse(
-            j.Id,
-            j.Title,
-            j.Company.Name,
-            j.Location,
-            j.Type,
-            j.Applications.Count()
-        ))
-        .ToListAsync();
+      return await _activeListingsQuery(_db).ToListAsync();   
     }
 
     public async Task<JobListing?> GetByIdAsync(Guid listingId)
@@ -97,10 +86,87 @@ public class JobListingRepository(JobListingDbContext db) : IJobListingRepositor
         .AnyAsync(j => j.Id == listingId);
     }
 
+    public async Task<IEnumerable<JobListResponse>> SearchAsync(string searchTerm)
+    {
+        return await _db.JobListings
+        .AsNoTracking()
+        .Where(j =>
+            j.IsActive &&
+            j.ClosingDate > DateTime.UtcNow)
+        .Where(j =>
+            EF.Functions.ToTsVector(
+                "english",
+                j.Title + " " + j.Description)
+            .Matches(
+                EF.Functions.PlainToTsQuery(
+                    "english",
+                    searchTerm)))
+        .Select(j => new JobListResponse(
+            j.Id,
+            j.Title,
+            j.Company.Name,
+            j.Location,
+            j.Type,
+            j.Applications.Count()
+        ))
+        .ToListAsync();
+    }
+
     public async Task UpdateAsync(JobListing listing)
     {
         _db.JobListings.Update(listing);
 
     await _db.SaveChangesAsync();
     }
+
+    public async Task<IEnumerable<JobListingStatsResponse>> GetApplicationStatsAsync(Guid companyId)
+    {
+       FormattableString sql = $$"""
+        SELECT
+        jl."Id" AS "ListingId",
+        jl."Title" AS "Title",
+
+        COUNT(*) FILTER (WHERE a."Status" = 'Submitted') AS "SubmittedCount",
+        COUNT(*) FILTER (WHERE a."Status" = 'UnderReview') AS "UnderReviewCount",
+        COUNT(*) FILTER (WHERE a."Status" = 'Shortlisted') AS "ShortlistedCount",
+        COUNT(*) FILTER (WHERE a."Status" = 'Rejected') AS "RejectedCount",
+        COUNT(*) FILTER (WHERE a."Status" = 'Offered') AS "OfferedCount",
+
+        COUNT(a."Id") AS "TotalApplications",
+
+        RANK() OVER (ORDER BY COUNT(a."Id") DESC) AS "Rank"
+
+        FROM "JobListings" jl
+        LEFT JOIN "Applications" a
+        ON a."JobListingId" = jl."Id"
+
+        WHERE jl."CompanyId" = {companyId}
+        AND jl."IsActive" = true
+
+        GROUP BY jl."Id", jl."Title";
+        """;
+
+    return await _db.Database.SqlQuery<JobListingStatsResponse>(sql).ToListAsync();
+    }
+
+    //=================================================================================================================================
+    private static readonly Func<
+    JobListingDbContext,
+    IAsyncEnumerable<JobListResponse>>
+    _activeListingsQuery =
+        EF.CompileAsyncQuery(
+            (JobListingDbContext db) =>
+                db.JobListings
+                    .AsNoTracking()
+                    .Where(j =>
+                        j.IsActive &&
+                        j.ClosingDate > DateTime.UtcNow)
+                    .Select(j =>
+                        new JobListResponse(
+                            j.Id,
+                            j.Title,
+                            j.Company.Name,
+                            j.Location,
+                            j.Type,
+                            j.Applications.Count())));
 }

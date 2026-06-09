@@ -29,9 +29,15 @@ builder.Services.AddControllers();
 builder.Services.AddProblemDetails(); // enables standard RFC7807 Problem Details responses
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();//assignemnt 4.3
 
-builder.Services.AddDbContext<JobListingDbContext>(options =>
+builder.Services.AddSingleton<SlowQueryInterceptor>();
+builder.Services.AddDbContext<JobListingDbContext>((sp, options) =>
+{
     options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+        builder.Configuration.GetConnectionString("DefaultConnection"));
+
+    options.AddInterceptors(
+        sp.GetRequiredService<SlowQueryInterceptor>());
+});
 
 // Scalar (API docs UI)
 builder.Services.AddOpenApi();
