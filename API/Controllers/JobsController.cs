@@ -29,18 +29,25 @@ public class JobsController(IJobListingService service) : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<JobDetailResponse>>
-        GetListingByIdAsync(Guid id)
+    public async Task<ActionResult<JobDetailResponse>> GetListingByIdAsync(Guid id)
     {
         var job = await _service.GetListingAsync(id);
+
+        var etag = $"\"{job.Id}-{job.PostedAt.Ticks}-{job.MinSalary}\"";
+
+    if (Request.Headers.IfNoneMatch == etag)
+    {
+        return StatusCode(StatusCodes.Status304NotModified);
+    }
+
+    Response.Headers.ETag = etag;
 
         return Ok(job);
     }
 
     [HttpPost]
     [Authorize(Roles = "Employer")]
-    public async Task<ActionResult<JobResponse>>
-        CreateJobAsync([FromBody] CreateJobRequest request)
+    public async Task<ActionResult<JobResponse>> CreateJobAsync([FromBody] CreateJobRequest request)
     {
         var job = await _service.CreateListingAsync(request);
 
@@ -64,8 +71,7 @@ public class JobsController(IJobListingService service) : ControllerBase
 
     [HttpPatch("{id:guid}/close")]
     [Authorize(Roles = "Employer")]
-    public async Task<IActionResult>
-        CloseJobAsync(Guid id)
+    public async Task<IActionResult> CloseJobAsync(Guid id)
     {
         await _service.CloseListingAsync(id);
 

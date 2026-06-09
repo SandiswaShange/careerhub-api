@@ -241,3 +241,6 @@ For the application submission endpoint this limitation is acceptable because th
 
 ##  AllowAnyOrigin() combined with AllowCredentials() 
 AllowAnyOrigin() cannot be combined with AllowCredentials() because browsers would otherwise send credentials such as cookies or authorization tokens to every origin on the internet. ASP.NET Core prevents this configuration and throws an exception at startup because it would create a serious security vulnerability.
+
+## What would a stronger ETag look like?
+A stronger ETag would be based on a LastModified timestamp or RowVersion column stored on the entity. Every update would change the value, ensuring the ETag changes whenever any meaningful field changes. This is more reliable than manually combining selected fields because it guarantees every modification produces a new ETag.

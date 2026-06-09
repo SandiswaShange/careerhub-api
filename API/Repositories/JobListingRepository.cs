@@ -162,6 +162,8 @@ public class JobListingRepository(JobListingDbContext db) : IJobListingRepositor
             j.Location,
             j.Type,
             j.PostedAt,
+            j.MinSalary,
+            j.MaxSalary,
             j.Applications.Select(a =>
                 new ApplicationResponse(
                     a.Applicant.FirstName + " " +

@@ -7,5 +7,7 @@ public record JobDetailResponse(
     string Location,
     JobType Type,
     DateTime PostedAt,
+    decimal? MinSalary,
+    decimal? MaxSalary,
     IEnumerable<ApplicationResponse> Applications
 );
