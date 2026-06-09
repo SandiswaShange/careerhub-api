@@ -147,4 +147,9 @@ public class JobListingService(IJobListingRepository jobRepository,ICompanyRepos
 
     return "Salary not specified";
 }
+
+    public async Task<PagedResponse<JobListResponse>> GetActiveListingsPagedAsync(Guid companyId, int page, int pageSize)
+    {
+        return await _jobRepository.GetActiveListingsPagedAsync(companyId,page,pageSize);
+    }
 }

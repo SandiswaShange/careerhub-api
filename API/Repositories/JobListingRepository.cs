@@ -45,6 +45,42 @@ public class JobListingRepository(JobListingDbContext db) : IJobListingRepositor
         .ToListAsync();
     }
 
+    public async Task<PagedResponse<JobListResponse>> GetActiveListingsPagedAsync(Guid companyId, int page, int pageSize)
+    {
+        var query = _db.JobListings
+        .AsNoTracking()
+        .Where(j => j.CompanyId == companyId)
+        .OrderByDescending(j => j.PostedAt);
+
+        var totalCount = await query.CountAsync();
+
+        var listings = await query
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .Select(j => new JobListResponse(
+            j.Id,
+            j.Title,
+            j.Company.Name,
+            j.Location,
+            j.Type,
+            j.Applications.Count()
+        ))
+        .ToListAsync();
+
+        var totalPages =
+        (int)Math.Ceiling(totalCount / (double)pageSize);
+
+        return new PagedResponse<JobListResponse>(
+        listings,
+        page,
+        pageSize,
+        totalCount,
+        totalPages,
+        page < totalPages,
+        page > 1
+    );
+    }
+
     public async Task<JobListing?> GetByIdAsync(Guid listingId)
     {
           return await _db.JobListings
