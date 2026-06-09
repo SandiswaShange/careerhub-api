@@ -70,7 +70,7 @@ var app = builder.Build();
 
 
 app.UseSerilogRequestLogging();//assignemnt 4.3
-    app.UseCors("AuthorizationPolicy");
+    app.UseCors("FrontendPolicy");
     app.UseAuthentication();
     app.UseAuthorization();
 app.UseExceptionHandler(); // catches unhandled exceptions and returns Problem Details JSON
