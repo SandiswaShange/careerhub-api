@@ -165,14 +165,17 @@ C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\api\bin
 C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\api\bin\Debug\net10.0\runtimes\win-arm64\native\e_sqlite3.dll
 C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\api\bin\Debug\net10.0\runtimes\win-x64\native\e_sqlite3.dll
 C:\Users\sandi\Documents\Bitcube Assignments\CareerHub-API\careerhub-api\api\bin\Debug\net10.0\runtimes\win-x86\native\e_sqlite3.dll
-C:\Users\Sandi\Downloads\Bitcube\Careerhub-api\careerhub-api\api\bin\Debug\net10.0\appsettings.json
 C:\Users\Sandi\Downloads\Bitcube\Careerhub-api\careerhub-api\api\bin\Debug\net10.0\appsettings.Development.json
+C:\Users\Sandi\Downloads\Bitcube\Careerhub-api\careerhub-api\api\bin\Debug\net10.0\appsettings.json
 C:\Users\Sandi\Downloads\Bitcube\Careerhub-api\careerhub-api\api\bin\Debug\net10.0\API.staticwebassets.endpoints.json
 C:\Users\Sandi\Downloads\Bitcube\Careerhub-api\careerhub-api\api\bin\Debug\net10.0\API.exe
 C:\Users\Sandi\Downloads\Bitcube\Careerhub-api\careerhub-api\api\bin\Debug\net10.0\API.deps.json
 C:\Users\Sandi\Downloads\Bitcube\Careerhub-api\careerhub-api\api\bin\Debug\net10.0\API.runtimeconfig.json
 C:\Users\Sandi\Downloads\Bitcube\Careerhub-api\careerhub-api\api\bin\Debug\net10.0\API.dll
 C:\Users\Sandi\Downloads\Bitcube\Careerhub-api\careerhub-api\api\bin\Debug\net10.0\API.pdb
+C:\Users\Sandi\Downloads\Bitcube\Careerhub-api\careerhub-api\api\bin\Debug\net10.0\Asp.Versioning.Abstractions.dll
+C:\Users\Sandi\Downloads\Bitcube\Careerhub-api\careerhub-api\api\bin\Debug\net10.0\Asp.Versioning.Http.dll
+C:\Users\Sandi\Downloads\Bitcube\Careerhub-api\careerhub-api\api\bin\Debug\net10.0\Asp.Versioning.Mvc.dll
 C:\Users\Sandi\Downloads\Bitcube\Careerhub-api\careerhub-api\api\bin\Debug\net10.0\Humanizer.dll
 C:\Users\Sandi\Downloads\Bitcube\Careerhub-api\careerhub-api\api\bin\Debug\net10.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\Sandi\Downloads\Bitcube\Careerhub-api\careerhub-api\api\bin\Debug\net10.0\Microsoft.AspNetCore.OpenApi.dll

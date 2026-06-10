@@ -17,13 +17,13 @@ public class ApplicationStatusRules
             ApplicationStatus.UnderReview,
             new()
             {
-                ApplicationStatus.InterviewSet,
+                ApplicationStatus.Shortlisted,
                 ApplicationStatus.Rejected
             }
         },
 
         {
-            ApplicationStatus.InterviewSet,
+            ApplicationStatus.Shortlisted,
             new()
             {
                 ApplicationStatus.OfferMade,
@@ -35,7 +35,7 @@ public class ApplicationStatusRules
             ApplicationStatus.OfferMade,
             new()
             {
-                ApplicationStatus.Accepted,
+                ApplicationStatus.Offered,
                 ApplicationStatus.Rejected
             }
         }

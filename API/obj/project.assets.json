@@ -3073,11 +3073,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\API.csproj",
+      "projectUniqueName": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\api\\API.csproj",
       "projectName": "API",
-      "projectPath": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\API.csproj",
+      "projectPath": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\api\\API.csproj",
       "packagesPath": "C:\\Users\\Sandi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\obj\\",
+      "outputPath": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\api\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Sandi\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -3593,12 +3593,6 @@
     }
   },
   "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Problem reading the cache file C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\obj\\project.nuget.cache : '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0."
-    },
     {
       "code": "NU1510",
       "level": "Warning",
