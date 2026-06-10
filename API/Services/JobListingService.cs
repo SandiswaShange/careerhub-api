@@ -41,6 +41,10 @@ public class JobListingService(IJobListingRepository jobRepository,ICompanyRepos
     {
         throw new ArgumentException("Closing date must be in the future.");
     }
+    if (dto.SalaryMin > dto.SalaryMax)
+    {
+        throw new ArgumentException("Minimum salary cannot exceed maximum salary.");
+    }
 
     var listing = new JobListing
     {

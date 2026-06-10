@@ -244,3 +244,36 @@ AllowAnyOrigin() cannot be combined with AllowCredentials() because browsers wou
 
 ## What would a stronger ETag look like?
 A stronger ETag would be based on a LastModified timestamp or RowVersion column stored on the entity. Every update would change the value, ensuring the ETag changes whenever any meaningful field changes. This is more reliable than manually combining selected fields because it guarantees every modification produces a new ETag.
+
+## What belongs in a unit test vs an integration test
+* Salary range validation in JobListingService.CreateAsync
+I would probably test it with unit testing using NSubstitute mocks because the validation logic exists entirely inside the service layer. The test only needs to verify that the service rejects a salary range where SalaryMax is less than SalaryMin.
+An integration test cannot isolate the service logic because it exercises multiple layers at once. If the test fails, it is harder to determine whether the problem is in the service, repository, database, or API layer.
+* The [Authorize] attribute on POST /api/v1/jobs
+I would probably test it with integration testing using WebApplicationFactory because authorization is part of the ASP.NET Core middleware pipeline. The test must verify that unauthenticated users receive 401 Unauthorized and that authenticated users with the correct role can access the endpoint.
+A unit test cannot verify this because calling the controller method directly bypasses routing, authentication middleware, and authorization filters.
+* The SalaryMax > SalaryMin database check constraint
+I would probably test it with integration testing because the constraint exists inside PostgreSQL. The test must attempt to insert invalid data and verify that the database rejects it.
+A unit test cannot verify database constraints because mocks do not execute real SQL and do not enforce database rules.
+* The "api-supported-versions: 1.0" header on every response
+I would probably test it with integration test because API versioning is configured in ASP.NET Core and produces HTTP headers during request processing.
+A unit test cannot verify response headers because the versioning middleware is never executed when controller methods are called directly.
+* The "HasAppliedAsync" compiled query returning the correct boolean
+I would probably test it with integration testing against PostgreSQL because compiled queries are executed by EF Core and translated into SQL. The test must verify that the query returns the correct result when real data exists in the database.
+A unit test cannot verify query translation or execution because mocked repositories never generate or execute SQL.
+
+## Why the in-memory EF Core provider is insufficient for the CareerHub system
+* In Assignment 2.4, I added database-level check constraints for salary ranges and dates. The EF Core In-Memory provider does not execute SQL and therefore does not enforce PostgreSQL check constraints. Invalid data that would be rejected in production may be accepted during testing.
+* GetApplicationStatsAsync used raw SQL like "COUNT(*)". The In-Memory provider cannot execute PostgreSQL statements. As a result, the application statistics query cannot be tested accurately.
+* In Assignment 2.4, I added full-text search using PostgreSQL's tsvector and GIN indexes. The In-Memory provider does not support PostgreSQL-specific features like that. Tests using the In-Memory provider cannot verify that the search query works correctly or that the index is used.
+
+## Test isolation
+A test is isolated when its result does not depend on any other test. Each test should create its own data, perform its assertions, and clean up after itself. Isolation matters because tests must produce the same result regardless of execution order.
+If we let one repository test insert a job listing and another test assume the database is empty. If the tests share the same database and run in a different order, the second test may fail unexpectedly because data from the first test still exists.
+This creates bad tests that sometimes fail because of execution order.
+TestContainers solves this problem by creating a fresh PostgreSQL container for testing. Per-test data seeding ensures each test inserts only the data it requires. Because every test controls its own data, tests remain independent and deterministic.
+
+## The purpose of a CI pipeline
+Running tests locally verifies that code works on a person's machine before it is committed. A CI pipeline automatically builds and tests the combined codebase whenever changes are pushed or merged.It can catch problems that local testing cannot.
+For example, if one developer changes the repository layer and another dev changes the service layer. Both developers run their local tests and everything passes. However, after the changes are merged together, a method signature mismatch causes the application to fail to compile. Neither developer could detect this problem locally because they only tested their own branch.
+The CI pipeline builds the merged code and runs the complete test suite, allowing integration problems between independently developed changes to be detected immediately. This ensures that the main branch remains stable and deployable.
