@@ -110,3 +110,5 @@ app.UseRateLimiter();
 app.MapControllers().RequireRateLimiting("global");
 
 app.Run();
+
+public partial class Program { }
