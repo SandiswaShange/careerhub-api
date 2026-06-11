@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "x8VKFU7zR1E=",
+  "dgSpecHash": "Z7u4bhdpLCM=",
   "success": true,
-  "projectFilePath": "c:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\Api.Tests\\API.Tests.csproj",
+  "projectFilePath": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API.Tests\\API.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Sandi\\.nuget\\packages\\asp.versioning.abstractions\\10.0.0\\asp.versioning.abstractions.10.0.0.nupkg.sha512",
     "C:\\Users\\Sandi\\.nuget\\packages\\asp.versioning.http\\10.0.0\\asp.versioning.http.10.0.0.nupkg.sha512",
@@ -83,15 +83,5 @@
     "C:\\Users\\Sandi\\.nuget\\packages\\xunit.extensibility.execution\\2.9.3\\xunit.extensibility.execution.2.9.3.nupkg.sha512",
     "C:\\Users\\Sandi\\.nuget\\packages\\xunit.runner.visualstudio\\3.1.4\\xunit.runner.visualstudio.3.1.4.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-      "message": "Problem reading the cache file c:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\Api.Tests\\obj\\project.nuget.cache : '<' is an invalid start of a property name. Expected a '\"'. Path: $ | LineNumber: 2 | BytePositionInLine: 0.",
-      "projectPath": "c:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\Api.Tests\\API.Tests.csproj",
-      "warningLevel": 1,
-      "filePath": "c:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\Api.Tests\\API.Tests.csproj",
-      "targetGraphs": []
-    }
-  ]
+  "logs": []
 }
