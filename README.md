@@ -309,3 +309,21 @@ Requiring branches to be up to date forces GitHub to merge the latest main branc
 
 The option 'Do not allow bypassing the above settings' ensures that all contributors, including repository administrators, must follow the same quality controls.
 Without this setting, an administrator could merge code directly into main without running tests or passing required checks, potentially introducing defects into the production branch.
+
+## Test Coverage Analysis
+### What the Unit Tests Do Not Cover
+1. Authentication and Authorization
+The unit tests verify service-layer business logic, but they do not verify that endpoints protected with [Authorize] actually reject unauthenticated users. This requires an integration test because authorization is enforced by the ASP.NET Core middleware pipeline, which is not executed during unit testing.
+
+2. ETag and Response Headers
+The unit tests do not verify that ETag headers, X-Total-Count headers, or api-supported-versions headers are written to HTTP responses.
+These behaviours occur at the controller and HTTP pipeline level and require integration tests using WebApplicationFactory.
+
+### What the Integration Tests Do Not Cover
+* Database Constraints and PostgreSQL Features
+WebApplicationFactory tests exercise the full HTTP pipeline but do not verify that PostgreSQL-specific database features like check constraints and full-text search indexes behave correctly. These behaviours require repository tests using TestContainers because only a real PostgreSQL database can verify them.
+
+### What TestContainers Tests Do Not Cover
+* Business Validation in the Service Layer
+TestContainers repository tests verify database access and persistence behaviour, but they do not test service-layer business rules like salary validation and status transition validation.
+These rules belong to the service layer and are covered by unit tests using NSubstitute. Repository tests bypass the service layer entirely and therefore cannot verify this behaviou
