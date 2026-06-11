@@ -277,3 +277,53 @@ TestContainers solves this problem by creating a fresh PostgreSQL container for 
 Running tests locally verifies that code works on a person's machine before it is committed. A CI pipeline automatically builds and tests the combined codebase whenever changes are pushed or merged.It can catch problems that local testing cannot.
 For example, if one developer changes the repository layer and another dev changes the service layer. Both developers run their local tests and everything passes. However, after the changes are merged together, a method signature mismatch causes the application to fail to compile. Neither developer could detect this problem locally because they only tested their own branch.
 The CI pipeline builds the merged code and runs the complete test suite, allowing integration problems between independently developed changes to be detected immediately. This ensures that the main branch remains stable and deployable.
+
+## Step-by-Step Branch Protection Configuration Guide
+### Steps
+1. Open Repository Settings
+* Go to your repository page on GitHub.
+* Click the Settings tab in the horizontal navigation menu at the top. (Note: If you do not see this tab, you lack administrator or owner permissions)
+2. Access Branch Settings
+* Locate the Code and automation section in the left-hand sidebar.
+* Click on Branches.
+* Under the Branch protection rules heading, click the Add rule button on the right
+3. Target the Main Branch
+* Find the Branch name pattern input field.
+* Type exactly main to target your default branch.
+4. Select Recommended Protection Rules
+* Require a pull request before merging: Check this box to stop direct pushes and force developers to use pull requests.
+* Require approvals: Check this sub-option and designate how many peer approvals (usually 1 or 2) are mandatory before merging.
+* Require status checks to pass before merging: Check this box if you have CI/CD workflows (like GitHub Actions) that must pass before code is
+merged.
+* Do not allow bypassing the above settings: Check this box at the bottom to ensure the rules strictly apply to repository administrators and
+owners as well.
+5. Save Changes
+* Scroll to the bottom of the page and click the green Create or Save changes button.
+* Confirm your identity with your password or 2FA if prompted
+
+### Required Status Check
+
+Requiring branches to be up to date forces GitHub to merge the latest main branch into the pull request and run the pipeline again before allowing the merge. This ensures the code is tested against the current state of the repository.
+
+### Why Prevent Bypassing Rules
+
+The option 'Do not allow bypassing the above settings' ensures that all contributors, including repository administrators, must follow the same quality controls.
+Without this setting, an administrator could merge code directly into main without running tests or passing required checks, potentially introducing defects into the production branch.
+
+## Test Coverage Analysis
+### What the Unit Tests Do Not Cover
+1. Authentication and Authorization
+The unit tests verify service-layer business logic, but they do not verify that endpoints protected with [Authorize] actually reject unauthenticated users. This requires an integration test because authorization is enforced by the ASP.NET Core middleware pipeline, which is not executed during unit testing.
+
+2. ETag and Response Headers
+The unit tests do not verify that ETag headers, X-Total-Count headers, or api-supported-versions headers are written to HTTP responses.
+These behaviours occur at the controller and HTTP pipeline level and require integration tests using WebApplicationFactory.
+
+### What the Integration Tests Do Not Cover
+* Database Constraints and PostgreSQL Features
+WebApplicationFactory tests exercise the full HTTP pipeline but do not verify that PostgreSQL-specific database features like check constraints and full-text search indexes behave correctly. These behaviours require repository tests using TestContainers because only a real PostgreSQL database can verify them.
+
+### What TestContainers Tests Do Not Cover
+* Business Validation in the Service Layer
+TestContainers repository tests verify database access and persistence behaviour, but they do not test service-layer business rules like salary validation and status transition validation.
+These rules belong to the service layer and are covered by unit tests using NSubstitute. Repository tests bypass the service layer entirely and therefore cannot verify this behaviou
