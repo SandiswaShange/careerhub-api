@@ -29,6 +29,18 @@ ARG TARGETARCH
 RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
     dotnet publish -a ${TARGETARCH/amd64/x64} --use-current-runtime --self-contained false -o /app
 
+# Copy project files first and restore separately.
+COPY ["API/API.csproj", "API/"]
+RUN dotnet restore "API/API.csproj"
+
+# Copy the rest of the source and publish.
+COPY API/ API/
+WORKDIR "/src/API"
+RUN dotnet publish "API.csproj" \
+    --configuration Release \
+    --no-restore \
+    --output /app/publish
+
 # If you need to enable globalization and time zones:
 # https://github.com/dotnet/dotnet-docker/blob/main/samples/enable-globalization.md
 ################################################################################
@@ -53,4 +65,5 @@ COPY --from=build /app .
 # and https://github.com/dotnet/dotnet-docker/discussions/4764
 USER $APP_UID
 
+EXPOSE 8080
 ENTRYPOINT ["dotnet", "Careerhub-Api.dll"]

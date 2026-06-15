@@ -8,9 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using API.Services;
 using API.Data;
 using Asp.Versioning;
-using System.Threading.RateLimiting;    
+using System.Threading.RateLimiting;
+using API.Infrastructure.OpenApi;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.ResponseCompression;
 
-Log.Logger = new LoggerConfiguration()
+try
+{Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();//assignemnt 4.3
 
@@ -33,6 +38,20 @@ builder.Services.AddRateLimitingPolicies();
 builder.Services.AddProblemDetails(); // enables standard RFC7807 Problem Details responses
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();//assignemnt 4.3
 
+    builder.Services.AddResponseCompression(options =>
+    {
+        options.EnableForHttps = true;
+        options.Providers.Add<BrotliCompressionProvider>();
+        options.Providers.Add<GzipCompressionProvider>();
+        options.MimeTypes = ResponseCompressionDefaults.MimeTypes
+            .Append("application/json");
+    });
+
+builder.Services.AddHealthChecks().AddDbContextCheck<JobListingDbContext>(
+            name: "database",
+            failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy,
+            tags: ["ready"]);
+
 builder.Services.AddSingleton<SlowQueryInterceptor>();
 builder.Services.AddDbContext<JobListingDbContext>((sp, options) =>
 {
@@ -44,7 +63,11 @@ builder.Services.AddDbContext<JobListingDbContext>((sp, options) =>
 });
 
 // Scalar (API docs UI)
-builder.Services.AddOpenApi();
+builder.Services.AddScoped<JobListingDocumentTransformer>();
+builder.Services.AddOpenApi(options =>
+    {
+        options.AddDocumentTransformer<JobListingDocumentTransformer>();
+    });
 builder.Services.AddCors(options =>
      options.AddPolicy("FrontendPolicy", policy =>
     {
@@ -109,6 +132,25 @@ app.UseAuthorization();
 app.UseRateLimiter();
 app.MapControllers().RequireRateLimiting("global");
 
-app.Run();
+
+   app.MapHealthChecks("/health/live", new HealthCheckOptions
+    {
+        Predicate = _ => false
+    });
+
+    app.MapHealthChecks("/health/ready", new HealthCheckOptions
+    {
+        Predicate = check => check.Tags.Contains("ready")
+    });
+
+app.Run();}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application failed to start correctly.");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
 
 public partial class Program { }

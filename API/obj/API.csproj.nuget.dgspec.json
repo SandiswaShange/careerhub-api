@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\API.csproj": {}
+    "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\api\\API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\API.csproj": {
+    "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\api\\API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\API.csproj",
+        "projectUniqueName": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\api\\API.csproj",
         "projectName": "API",
-        "projectPath": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\API.csproj",
-        "packagesPath": "C:\\Users\\Sandi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Sandi\\Downloads\\Bitcube\\Careerhub-api\\careerhub-api\\API\\obj\\",
+        "projectPath": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\api\\API.csproj",
+        "packagesPath": "C:\\Users\\TrainingCenter 3\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Sandi\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\TrainingCenter 3\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net10.0"
@@ -67,6 +67,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[10.0.8, )"
+            },
+            "Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[10.0.9, )"
             },
             "Microsoft.IdentityModel.Tokens": {
               "target": "Package",
