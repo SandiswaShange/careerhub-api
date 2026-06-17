@@ -1,8 +1,8 @@
 export interface JobListing {
   id: string;
   title: string;
-  company: number;
-  location: number;
+  company: string;
+  location: string;
   employmentType: EmploymentType;
   salaryMin: number;
   salaryMax: number;
