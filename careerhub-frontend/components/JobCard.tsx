@@ -1,5 +1,6 @@
 import { JobListing } from "@/types";//Step 1: Import the type
 import { JobStatusBadge } from "./JobStatusBadge";
+import { cn } from "@/lib/utils";
 
 function formatSalary(min: number, max: number) {
   return `R${min} - R${max} pm`;
@@ -23,12 +24,24 @@ function getRelativeDate(postedAt: string) {
 
 interface JobListingProps {job: JobListing; isSelected: boolean; onSelect: (id: string) => void;}//Step 2: Create props
 export function JobCard({job,isSelected,onSelect,}: JobListingProps){//Step 3: Create component{
-return (
+const cardClass = cn(
+    "border rounded p-4 cursor-pointer transition-all",
+    "bg-white text-slate-900 border-slate-200",
+    "dark:bg-slate-900 dark:text-slate-100 dark:border-slate-800",
+
+    // selected state (required: visible in BOTH themes)
+    isSelected &&
+      "ring-2 ring-blue-500 border-blue-400 dark:ring-blue-400",
+
+    // expired state (card-level requirement)
+    !job.isActive &&
+      "opacity-60 grayscale border-red-300 dark:border-red-800"
+  );
+
+  return (
     <div
       onClick={() => onSelect(job.id)}
-      className={`border rounded p-4 cursor-pointer ${
-        isSelected ? "border-blue-500 bg-blue-50" : ""
-      }`}
+      className={cardClass}
     >
       <h2 className="text-xl font-semibold">
         {job.title}
