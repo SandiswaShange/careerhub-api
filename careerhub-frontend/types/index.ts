@@ -8,7 +8,7 @@ export interface JobListing {
   salaryMax: number;
   postedAt: string;
   isActive: boolean;
-  applicantCount: boolean;
+  applicantCount: number;
 }
 
 export type EmploymentType =

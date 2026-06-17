@@ -3101,19 +3101,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\TrainingCenter 3\\.nuget\\packages\\": {}
+    "C:\\Users\\Sandi\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\API\\API.csproj",
+      "projectUniqueName": "C:\\Users\\Sandi\\Downloads\\17 June\\careerhub-api\\API\\API.csproj",
       "projectName": "API",
-      "projectPath": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\API\\API.csproj",
-      "packagesPath": "C:\\Users\\TrainingCenter 3\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\API\\obj\\",
+      "projectPath": "C:\\Users\\Sandi\\Downloads\\17 June\\careerhub-api\\API\\API.csproj",
+      "packagesPath": "C:\\Users\\Sandi\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Sandi\\Downloads\\17 June\\careerhub-api\\API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\TrainingCenter 3\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\Sandi\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
