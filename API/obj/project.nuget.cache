@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "8SfXj7ABGMI=",
+  "dgSpecHash": "0SLFvNnGTf8=",
   "success": true,
-  "projectFilePath": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\api\\API.csproj",
+  "projectFilePath": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\API\\API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\TrainingCenter 3\\.nuget\\packages\\asp.versioning.abstractions\\10.0.0\\asp.versioning.abstractions.10.0.0.nupkg.sha512",
     "C:\\Users\\TrainingCenter 3\\.nuget\\packages\\asp.versioning.http\\10.0.0\\asp.versioning.http.10.0.0.nupkg.sha512",
@@ -61,9 +61,9 @@
       "code": "NU1510",
       "level": "Warning",
       "message": "PackageReference Microsoft.AspNetCore.RateLimiting will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "projectPath": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\api\\API.csproj",
+      "projectPath": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\API\\API.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\api\\API.csproj",
+      "filePath": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\API\\API.csproj",
       "libraryId": "Microsoft.AspNetCore.RateLimiting",
       "targetGraphs": [
         "net10.0"

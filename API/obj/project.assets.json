@@ -3106,11 +3106,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\api\\API.csproj",
+      "projectUniqueName": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\API\\API.csproj",
       "projectName": "API",
-      "projectPath": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\api\\API.csproj",
+      "projectPath": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\API\\API.csproj",
       "packagesPath": "C:\\Users\\TrainingCenter 3\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\api\\obj\\",
+      "outputPath": "C:\\Users\\TrainingCenter 3\\Documents\\Projex\\15 June\\test\\careerhub-api\\API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\TrainingCenter 3\\AppData\\Roaming\\NuGet\\NuGet.Config"
