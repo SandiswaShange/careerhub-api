@@ -41,6 +41,42 @@ const jobs: JobListing[] = [
     isActive: true,
     applicantCount: 1,
   },
+  {
+  id: "550e8400-e29b-41d4-a716-446655440003",
+  title: "Business Analyst",
+  company: "Discovery",
+  location: "Pretoria",
+  employmentType: "FullTime",
+  salaryMin: 35000,
+  salaryMax: 55000,
+  postedAt: "2026-05-01T10:00:00",
+  isActive: false,
+  applicantCount: 0
+  },
+  {
+  id: "550e8400-e29b-41d4-a716-446655440004",
+  title: "Solution Architect",
+  company: "Standard Bank",
+  location: "Cape Town",
+  employmentType: "FullTime",
+  salaryMin: 60000,
+  salaryMax: 85000,
+  postedAt: "2026-05-01T10:00:00",
+  isActive: false,
+  applicantCount: 0
+  },
+  {
+  id: "550e8400-e29b-41d4-a716-446655440005",
+  title: "DevOps Engineer",
+  company: "Transnet",
+  location: "Bloemfontein",
+  employmentType: "Contract",
+  salaryMin: 75000,
+  salaryMax: 85000,
+  postedAt: "2026-05-01T10:00:00",
+  isActive: true,
+  applicantCount: 3
+  }
 ];
 
 export default function Home() {

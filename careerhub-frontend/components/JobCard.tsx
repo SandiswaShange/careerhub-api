@@ -2,7 +2,7 @@ import { JobListing } from "@/types";//Step 1: Import the type
 import { JobStatusBadge } from "./JobStatusBadge";
 
 function formatSalary(min: number, max: number) {
-  return `R${min.toLocaleString()} – R${max.toLocaleString()} pm`;
+  return `R${min} - R${max} pm`;
 }
 
 function getRelativeDate(postedAt: string) {
