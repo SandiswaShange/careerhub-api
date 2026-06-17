@@ -80,6 +80,7 @@ const jobs: JobListing[] = [
 ];
 
 export default function Home() {
+
   const [selectedId, setSelectedId] = useState<string | null>(() => {
     if (typeof window === "undefined") return null;
 
@@ -87,9 +88,7 @@ export default function Home() {
 
     if (!storedId) return null;
 
-    const exists = jobs.some((job) => job.id === storedId);
-
-    return exists ? storedId : null;
+    return storedId;
   });
 
   // EFFECT 2: persist selection whenever it changes
@@ -107,6 +106,7 @@ export default function Home() {
   function handleSelect(id: string) {
     setSelectedId(selectedId === id ? null : id);
   }
+}
 
   return (
     <main className="p-8">
