@@ -348,3 +348,30 @@ An error message saying something like "Type 'string' is not assignable to type 
 
 ## The && rendering trap
 When JavaScript evaluates left && right, it checks if the left side is truthy. If the left side is falsy, the operator short-circuits and immediately returns the exact value of the left side, not false. Because 0 is not a boolean value, 0 && {right side} evaluates directly to the number 0.
+
+## 1. The shadcn/ui ownership model
+
+This problem cannot happen with shadcn/ui because the component source code is copied directly into the project during installation. After running the shadcn/ui CLI, the component files become part of my codebase (for example, src/components/ui/badge.tsx) rather than being imported from a third-party package at runtime.
+Because the source code lives inside the project, I am responsible for maintaining it. If shadcn/ui releases a new version of a component, my existing code does not automatically change or break.
+The upgrade path is manual. I would compare the updated component with my local copy and decide whether to apply the changes. This gives me full control over upgrades and prevents external package updates from unexpectedly breaking the application.
+
+## 2. Why the cn utility exists
+
+If my JobCard uses conditional styling like className={`border border-gray-300 ${selected ? "border-blue-500" : ""}`}, it produces "border border-gray-300 border-blue-500".
+Both border-gray-300 and border-blue-500 modify the same CSS property. With plain string concatenation, both classes remain in the final output and the result depends on the order Tailwind generates its stylesheet, which is not guaranteed to match the order of classes in the string. The cn utility uses tailwind-merge to detect conflicting Tailwind classes and keep only the correct one. The result becomes "border border-blue-500". This ensures the selected card always receives the intended border colour and avoids unpredictable styling conflicts.
+
+## 3. The event handler versus useEffect argument
+
+Writing directly to sessionStorage inside the click handler works when the user selects or deselects a job through the UI. However, it cannot handle restoring a previously selected job when the page first loads.
+
+When the application starts, no click event occurs, so an event handler has no opportunity to read from sessionStorage and restore the selection. A useEffect with an empty dependency array can run automatically when the component mounts and perform this initialization.
+
+This matters because real users expect their selected job to remain available after refreshing the page or reopening the tab. Without the mount effect, the application would lose the user's previous selection even though the data still exists in storage.
+
+## 4. The source of truth for dark mode
+
+The isDark state in ThemeToggle is used only to determine what text and button behaviour should be displayed in the React component. It is not the actual source of truth for the application's theme.
+
+The true source of truth is the presence or absence of the dark class on the <html> element (document.documentElement). Tailwind's dark: utilities check this class to determine whether dark mode styles should be applied.
+
+If ThemeToggle were unmounted and then remounted after dark mode had been enabled, the application would remain in dark mode because the dark class would still exist on the <html> element. When the component mounts again, it can read the current preference from localStorage and synchronize its isDark state with the existing theme. The UI would therefore remain consistent even though the component itself was recreated.
