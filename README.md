@@ -326,4 +326,25 @@ WebApplicationFactory tests exercise the full HTTP pipeline but do not verify th
 ### What TestContainers Tests Do Not Cover
 * Business Validation in the Service Layer
 TestContainers repository tests verify database access and persistence behaviour, but they do not test service-layer business rules like salary validation and status transition validation.
-These rules belong to the service layer and are covered by unit tests using NSubstitute. Repository tests bypass the service layer entirely and therefore cannot verify this behaviou
+These rules belong to the service layer and are covered by unit tests using NSubstitute. Repository tests bypass the service layer entirely and therefore cannot verify this behaviour.
+
+## Storing selectedId in Home
+I will pass down the JobList component instead of making it own the state because the Home page won't be able to access it, which means the summary panel won't appear above.
+The nearest common ancestor rule produces the correct answer in every case because I'll be able to share the state since my JobList will be a child of Home.
+The Data Flow when clicking JobCard until it gets to Summary Panel.
+Home defines a state variable and a function to update it -> Home passes selectedJobId and setSelectedJobId down to JobList as props, which then passes them down to the individual JobCard components -> A user clicks a JobCard. The JobCard's onClick handler executes the setSelectedJobId function, passing the specific job ID as an argument -> , The state in Home updates because the function was defined in Home -> Home re-renders, triggering re-renders in all child components. The Summary Panel now receives the selected job's data and updates the UI.
+
+## Re-render cycle
+It would make sense for all 4 components to re-render because when setSelectedId changes to the selected card, the others have to be set to selected(bool): false. This happens because they're all children of the same component. The React 19 Compiler introduced Auto-Memoization to automatically detect which parts of the UI depend on which pieces of state. Modifying the DOM is forces the browser to recalculate layouts and repaint pixels whereas re-renderinsg, sometinmes called a virtual DOM, is an internal React JavaScript process whereby React runs the component functions to see what the UI should look like.
+
+## Union type vs String
+### Scenario 1
+A developer is tasked with adding a filtering feature to the job search sidebar or submitting a new job posting form. If employmentType is typed as a generic string, a developer can easily make a typo or use an unapproved term when assigning or checking values, for example, writing "Fulltime" with a space, or "Perm" instead of "FullTime"
+Accepting a string might allow users to type invalid values. If the user can somehow type a string, it would lead to a silent bug where we might not be able to filter or sort as intended because the value would be unrecognised when checking against the database.
+
+### Scenario 2
+The backend engineering team deploys an update to the database and API that introduces a ""Freelance"" employment type. However, the frontend team has not yet updated the CareerHub UI components, such as the JobCard icons or the summary panel formatting logic, to handle this value. If the frontend uses a generic string type, the data passes through cleanly, but the UI breaks down. A switch statement could will an unhandled default case, rendering an empty space, undefined, or crashing the component for users viewing a freelance job. When utilizing an exhaustive check pattern, TypeScript flags the omission.
+An error message saying something like "Type 'string' is not assignable to type 'never'" appears, adn the error is caught the moment the frontend fetches the updated API types and runs its automated build pipeline.
+
+## The && rendering trap
+When JavaScript evaluates left && right, it checks if the left side is truthy. If the left side is falsy, the operator short-circuits and immediately returns the exact value of the left side, not false. Because 0 is not a boolean value, 0 && {right side} evaluates directly to the number 0.
