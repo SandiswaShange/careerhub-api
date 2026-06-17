@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 import { JobListing } from "@/types";
 import { JobList } from "@/components/JobList";
 
@@ -80,7 +80,26 @@ const jobs: JobListing[] = [
 ];
 
 export default function Home() {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+
+    const storedId = sessionStorage.getItem("selectedJobId");
+
+    if (!storedId) return null;
+
+    const exists = jobs.some((job) => job.id === storedId);
+
+    return exists ? storedId : null;
+  });
+
+  // EFFECT 2: persist selection whenever it changes
+  useEffect(() => {
+    if (selectedId) {
+      sessionStorage.setItem("selectedJobId", selectedId);
+    } else {
+      sessionStorage.removeItem("selectedJobId");
+    }
+  }, [selectedId]);
 
   const selectedJob =
     jobs.find((job) => job.id === selectedId) ?? null;
