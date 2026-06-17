@@ -1,7 +1,10 @@
-import { JobListing } from "@/types";
-import Image from "next/image";
+"use client";
 
-const rooms: JobListing[] = [
+import { useState } from "react";
+import { JobListing } from "@/types";
+import { JobList } from "@/components/JobList";
+
+const jobs: JobListing[] = [
   {
     id: "550e8400-e29b-41d4-a716-446655440000",
     title: "Junior Software Developer",
@@ -12,10 +15,10 @@ const rooms: JobListing[] = [
     salaryMax: 40000,
     postedAt: "2026-06-17T14:30:00",
     isActive: true,
-    applicantCount: 1
+    applicantCount: 1,
   },
   {
-    id: "550e8400-e29b-41d4-a716-446655440000",
+    id: "550e8400-e29b-41d4-a716-446655440001",
     title: "Frontend Developer",
     company: "CareerHub",
     location: "Cape Town",
@@ -24,10 +27,10 @@ const rooms: JobListing[] = [
     salaryMax: 50000,
     postedAt: "2026-06-17T14:30:00",
     isActive: true,
-    applicantCount: 1
+    applicantCount: 1,
   },
   {
-    id: "550e8400-e29b-41d4-a716-446655440000",
+    id: "550e8400-e29b-41d4-a716-446655440002",
     title: "QA Tester",
     company: "CareerHub",
     location: "London",
@@ -36,16 +39,40 @@ const rooms: JobListing[] = [
     salaryMax: 35000,
     postedAt: "2026-06-17T14:30:00",
     isActive: true,
-    applicantCount: 1
+    applicantCount: 1,
   },
 ];
 
 export default function Home() {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const selectedJob =
+    jobs.find((job) => job.id === selectedId) ?? null;
+
+  function handleSelect(id: string) {
+    setSelectedId(selectedId === id ? null : id);
+  }
+
   return (
     <main className="p-8">
-      <h1 className="text-3xl font-bold">
-        CareeHub API frontend
+      <h1 className="text-3xl font-bold mb-6">
+        CareerHub Frontend
       </h1>
+
+      {selectedJob && (
+        <div className="border rounded p-4 mb-6">
+          <h2 className="font-semibold">
+            {selectedJob.title}
+          </h2>
+          <p>{selectedJob.company}</p>
+        </div>
+      )}
+
+      <JobList
+        jobs={jobs}
+        selectedId={selectedId}
+        onSelect={handleSelect}
+      />
     </main>
   );
 }
