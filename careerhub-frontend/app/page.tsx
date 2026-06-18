@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect  } from "react";
+import { twMerge } from "tailwind-merge";
 import { JobListing } from "@/types";
 import { JobList } from "@/components/JobList";
 
@@ -81,15 +82,23 @@ const jobs: JobListing[] = [
 
 export default function Home() {
 
-  const [selectedId, setSelectedId] = useState<string | null>(() => {
-    if (typeof window === "undefined") return null;
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
-    const storedId = sessionStorage.getItem("selectedJobId");
+useEffect(() => {
+  const storedId = sessionStorage.getItem("selectedJobId");
 
-    if (!storedId) return null;
+  if (storedId) {
+    setSelectedId(storedId);
+  }
+}, []);
 
-    return storedId;
-  });
+useEffect(() => {
+  if (selectedId) {
+    sessionStorage.setItem("selectedJobId", selectedId);
+  } else {
+    sessionStorage.removeItem("selectedJobId");
+  }
+}, [selectedId]);
 
   // EFFECT 2: persist selection whenever it changes
   useEffect(() => {
@@ -106,7 +115,6 @@ export default function Home() {
   function handleSelect(id: string) {
     setSelectedId(selectedId === id ? null : id);
   }
-}
 
   return (
     <main className="p-8">
