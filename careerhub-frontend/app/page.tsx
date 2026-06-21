@@ -2,6 +2,7 @@
 
 import { useState, useEffect  } from "react";
 import { JobList } from "@/components/JobList";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useQuery } from "@tanstack/react-query";
 import { fetchJobs } from "@/lib/api";
 import { JobListSkeleton } from "@/components/JobCardSkeleton";
@@ -80,9 +81,13 @@ if (isError) {
 
   return (
     <main className="p-8">
-      <h1 className="text-3xl font-bold mb-6">
+      <div className="flex items-center justify-between mb-6">
+      <h1 className="text-3xl font-bold">
         CareerHub Frontend
       </h1>
+
+      <ThemeToggle />
+    </div>
 
       {selectedJob && (
         <div className="border rounded p-4 mb-6">

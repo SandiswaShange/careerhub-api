@@ -51,9 +51,9 @@ const cardClass = cn(
         {job.company} · {job.location}
       </p>
 
-      <span className="inline-block mt-2 px-2 py-1 rounded text-sm bg-gray-100">
-        {job.employmentType}
-      </span>
+      <div className="mt-2">
+        <JobStatusBadge employmentType={job.employmentType} />
+      </div>
 
       <p className="mt-2">
         {formatSalary(job.salaryMin, job.salaryMax)}
