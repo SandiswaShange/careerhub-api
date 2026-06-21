@@ -375,3 +375,39 @@ The isDark state in ThemeToggle is used only to determine what text and button b
 The true source of truth is the presence or absence of the dark class on the <html> element (document.documentElement). Tailwind's dark: utilities check this class to determine whether dark mode styles should be applied.
 
 If ThemeToggle were unmounted and then remounted after dark mode had been enabled, the application would remain in dark mode because the dark class would still exist on the <html> element. When the component mounts again, it can read the current preference from localStorage and synchronize its isDark state with the existing theme. The UI would therefore remain consistent even though the component itself was recreated.
+
+## Server state vs client state
+useQuery provides several features automatically that would require additional code when using useEffect and useState.
+
+### 1. Automatic Loading State Management
+useQuery automatically tracks whether a request is currently running through properties such as isPending. Without this feature, I would need to create my own loading state variable. The application would not know when to show loading indicators such as skeleton cards unless I manually manage the state. This increases the chance of bugs where loading indicators appear at the wrong time or never disappear
+
+### 2. Automatic Error Handling
+useQuery automatically captures errors thrown by the query function and exposes them through isError and error.
+API failures may result in blank pages, unhandled exceptions, or inconsistent error messages if error handling is forgotten or implemented incorrectly
+
+### 3. Client-Side Caching
+TanStack Query stores successful responses in a cache associated with a query key.
+A manual useEffect implementation would fetch the data again every time the component mounts unless I build my own caching mechanism.
+Users would experience unnecessary loading delays and additional network requests when revisiting pages that have already loaded data.
+
+### 4. Background Refetching
+TanStack Query can automatically refetch stale data when the browser window regains focus while continuing to display the existing data.
+A standard useEffect only runs when the component mounts.
+Users may continue viewing outdated job listings until they manually refresh the page. New jobs or status changes would not appear automatically.
+
+## The queryKey Contract
+The queryKey uniquely identifies a piece of cached data inside TanStack Query. When a query executes, TanStack Query stores the result under the specified key. Future queries using the same key can reuse the cached data instead of making another network request.
+
+### Failure Mode 1: Different Data Accidentally Shares the Same Key
+If one component requests active jobs and another requests archived jobs, but both use ["jobs"], TanStack Query will treat both requests as the same query. One component may display incorrect data because cached results from the other query overwrite or replace what should be shown.
+
+### Failure Mode 2: Identical Data Uses Different Keys
+If two components both request all jobs but use ["jobs"] and ["all-jobs"] respectively, TanStack Query treats them as completely separate queries. The application performs duplicate network requests, users see additional loading states, and memory is wasted storing multiple copies of the same data.
+
+## Why fetch Does Not Throw on HTTP Errors
+fetch only rejects its promise when a network-level failure occurs, such as loss of internet connection, DNS failure or connection timeout. However, HTTP error responses such as 400, 404 or 500 still produce a valid HTTP response, so the promise resolves successfully. Instead of seeing the assignment's error panel and retry button, users may see missing data, invalid data, or a broken UI because TanStack Query believes the request succeeded.
+
+## Stale-while-revalidate
+By default, TanStack Query uses "staleTime: 0". This means cached data becomes stale immediately after it is fetched. When a user switches to another browser tab and later returns, TanStack Query can trigger a background refetch. The existing data remains visible while the new request is running, meaning the user continues seeing the current job listings without interruption. If updated data arrives, the UI updates automatically.
+With a standard useEffect[], the fetch only occurs when the component mounts. When the user returns to the tab later, no automatic refetch occurs, meaning the user continues viewing potentially outdated data until they manually refresh the page.
