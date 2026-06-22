@@ -1,4 +1,5 @@
 import { JobListing } from "@/types";
+import {ApplicationRequest,ApplicationResponse,} from "@/types";
 
 type PagedResponse<T> = {
   data: T[];
@@ -23,4 +24,32 @@ export async function fetchJobs(): Promise<JobListing[]> {
     (await res.json()) as PagedResponse<JobListing>;
 
   return result.data;
+}
+
+/*============================================Assignment 1.4=====================================================================*/
+export async function submitApplication(
+  application: ApplicationRequest
+): Promise<ApplicationResponse> {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  const res = await fetch(
+    `${baseUrl}/api/applications`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(application),
+    }
+  );
+
+  if (!res.ok) {
+    const problem = await res.json();
+
+    throw new Error(
+      problem.detail ?? problem.title
+    );
+  }
+
+  return res.json() as Promise<ApplicationResponse>;
 }
