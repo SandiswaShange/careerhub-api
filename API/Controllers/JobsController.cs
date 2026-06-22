@@ -22,8 +22,8 @@ public class JobsController(IJobListingService service) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<PagedResponse<JobListResponse>>>
     GetCompanyListingsAsync(
-        Guid companyId,
-        JobListingFilterQuery filter,
+        [FromQuery] Guid companyId,
+        [FromQuery] JobListingFilterQuery filter,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20
         )

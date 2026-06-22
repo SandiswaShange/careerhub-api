@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "fpGe/FYE+aQ=",
+  "dgSpecHash": "nkedfLFp3eY=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Sandi\\Downloads\\18 June\\API\\API.csproj",
+  "projectFilePath": "C:\\Users\\Sandi\\Downloads\\18 June\\api\\API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Sandi\\.nuget\\packages\\asp.versioning.abstractions\\10.0.0\\asp.versioning.abstractions.10.0.0.nupkg.sha512",
     "C:\\Users\\Sandi\\.nuget\\packages\\asp.versioning.http\\10.0.0\\asp.versioning.http.10.0.0.nupkg.sha512",
@@ -61,9 +61,9 @@
       "code": "NU1510",
       "level": "Warning",
       "message": "PackageReference Microsoft.AspNetCore.RateLimiting will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
-      "projectPath": "C:\\Users\\Sandi\\Downloads\\18 June\\API\\API.csproj",
+      "projectPath": "C:\\Users\\Sandi\\Downloads\\18 June\\api\\API.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Users\\Sandi\\Downloads\\18 June\\API\\API.csproj",
+      "filePath": "C:\\Users\\Sandi\\Downloads\\18 June\\api\\API.csproj",
       "libraryId": "Microsoft.AspNetCore.RateLimiting",
       "targetGraphs": [
         "net10.0"

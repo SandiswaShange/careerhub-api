@@ -3106,11 +3106,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Sandi\\Downloads\\18 June\\API\\API.csproj",
+      "projectUniqueName": "C:\\Users\\Sandi\\Downloads\\18 June\\api\\API.csproj",
       "projectName": "API",
-      "projectPath": "C:\\Users\\Sandi\\Downloads\\18 June\\API\\API.csproj",
+      "projectPath": "C:\\Users\\Sandi\\Downloads\\18 June\\api\\API.csproj",
       "packagesPath": "C:\\Users\\Sandi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Sandi\\Downloads\\18 June\\API\\obj\\",
+      "outputPath": "C:\\Users\\Sandi\\Downloads\\18 June\\api\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Sandi\\AppData\\Roaming\\NuGet\\NuGet.Config"

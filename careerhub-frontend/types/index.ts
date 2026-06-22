@@ -3,13 +3,21 @@ export interface JobListing {
   title: string;
   company: string;
   location: string;
+  type: number;
+  applicationCount: number;
+}
+/*export interface JobListing {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
   employmentType: EmploymentType;
   salaryMin: number;
   salaryMax: number;
   postedAt: string;
   isActive: boolean;
   applicantCount: number;
-}
+}*/
 
 export type EmploymentType =
   | "FullTime"
