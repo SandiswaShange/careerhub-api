@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { JobListing } from "@/types";
+/*import { JobListing } from "@/types";
 
 const jobs: JobListing[] = [
 {
@@ -75,7 +75,7 @@ const jobs: JobListing[] = [
   applicantCount: 3
   }
 ];
-
+*/
 export async function GET() {
-  return NextResponse.json(jobs);
+  return NextResponse.json([]);
 }

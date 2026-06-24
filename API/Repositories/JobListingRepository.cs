@@ -113,6 +113,10 @@ public class JobListingRepository(JobListingDbContext db) : IJobListingRepositor
             j.Title,
             j.Company.Name,
             j.Location,
+            j.MinSalary,
+            j.MaxSalary,
+            j.PostedAt,
+            j.IsActive,
             j.Type,
             j.Applications.Count()
         ))
@@ -153,6 +157,7 @@ public class JobListingRepository(JobListingDbContext db) : IJobListingRepositor
             j.PostedAt,
             j.MinSalary,
             j.MaxSalary,
+            j.IsActive,
             j.Applications.Select(a =>
                 new ApplicationResponse(
                     a.Applicant.FirstName + " " +
@@ -206,6 +211,10 @@ public class JobListingRepository(JobListingDbContext db) : IJobListingRepositor
             j.Title,
             j.Company.Name,
             j.Location,
+            j.MinSalary,
+            j.MaxSalary,
+            j.PostedAt,
+            j.IsActive,
             j.Type,
             j.Applications.Count()
         ))
@@ -267,6 +276,10 @@ public class JobListingRepository(JobListingDbContext db) : IJobListingRepositor
                             j.Title,
                             j.Company.Name,
                             j.Location,
+                            j.MinSalary,
+                            j.MaxSalary,
+                            j.PostedAt,
+                            j.IsActive,
                             j.Type,
                             j.Applications.Count())));
     public async Task<JobResponse> PatchAsync(Guid listingId, UpdateJobListingRequest request)

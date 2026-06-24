@@ -7,6 +7,10 @@ public record JobListResponse(
     string Title,
     string Company,
     string Location,
+    decimal? MinSalary,
+    decimal? MaxSalary,
+    DateTime PostedAt,
+    bool isActive,
     JobType Type,
     int ApplicationCount
 );

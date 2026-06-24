@@ -9,5 +9,6 @@ public record JobDetailResponse(
     DateTime PostedAt,
     decimal? MinSalary,
     decimal? MaxSalary,
+    bool isActive,
     IEnumerable<ApplicationResponse> Applications
 );

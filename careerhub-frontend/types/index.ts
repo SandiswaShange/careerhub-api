@@ -1,12 +1,12 @@
-export interface JobListing {
+/*export interface JobListing {
   id: string;
   title: string;
   company: string;
   location: string;
   type: number;
   applicationCount: number;
-}
-/*export interface JobListing {
+}*/
+export interface JobListing {
   id: string;
   title: string;
   company: string;
@@ -17,7 +17,7 @@ export interface JobListing {
   postedAt: string;
   isActive: boolean;
   applicantCount: number;
-}*/
+}
 
 export type EmploymentType =
   | "FullTime"
@@ -42,4 +42,17 @@ export interface ApplicationResponse {
   jobId: string;
   email: string;
   submittedAt: string;
+}
+export interface JobDetail {
+  id: string;
+  title: string;
+  description: string;
+  company: string;
+  location: string;
+  type: number;
+  postedAt: string;
+  minSalary: number | null;
+  maxSalary: number | null;
+  isActive: boolean;
+  applications: ApplicationResponse[];
 }

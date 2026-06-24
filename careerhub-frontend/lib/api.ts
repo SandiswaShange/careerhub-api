@@ -10,6 +10,45 @@ type PagedResponse<T> = {
   hasNextPage: boolean;
   hasPreviousPage: boolean;
 };
+export type ApiJobListing = {
+  id: string;
+  title: string;
+  company: string;
+  location: string;
+  type: number;
+  minSalary: number;
+  maxSalary: number;
+  postedAt: string;
+  isActive: boolean;
+  applicationCount: number;
+};
+export function mapJobListing(
+  job: ApiJobListing
+): JobListing {
+  return {
+    id: job.id,
+    title: job.title,
+    company: job.company,
+    location: job.location,
+
+    employmentType:
+      job.type === 0
+        ? "FullTime"
+        : job.type === 1
+        ? "PartTime"
+        : job.type === 2
+        ? "Contract"
+        : "Internship",
+
+    salaryMin: job.minSalary,
+    salaryMax: job.maxSalary,
+
+    postedAt: job.postedAt,
+    isActive: job.isActive,
+
+    applicantCount: job.applicationCount,
+  };
+}   
 
 export async function fetchJobs(): Promise<JobListing[]> {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -20,10 +59,9 @@ export async function fetchJobs(): Promise<JobListing[]> {
     throw new Error(`Failed to fetch jobs: HTTP ${res.status}`);
   }
 
-  const result =
-    (await res.json()) as PagedResponse<JobListing>;
+  const result = await res.json()as PagedResponse<ApiJobListing>;
 
-  return result.data;
+  return result.data.map(mapJobListing);
 }
 
 /*============================================Assignment 1.4=====================================================================*/
