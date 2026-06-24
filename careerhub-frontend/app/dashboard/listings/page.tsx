@@ -1,8 +1,33 @@
 import Link from "next/link";
 import { fetchJobs } from "@/lib/api";
 
+type ApplicationStat = {
+  jobId: string;
+  applicationCount: number;
+};
+
+async function getApplicationStats(): Promise<ApplicationStat[]> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/applications/stats`,
+    {
+      cache: "no-store",
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error(
+      `Failed to fetch application stats: ${res.status}`
+    );
+  }
+
+  return res.json();
+}
+
 export default async function ListingsPage() {
-  const jobs = await fetchJobs();
+  const [jobs, stats] = await Promise.all([
+  fetchJobs(),
+  getApplicationStats(),
+]);
 
   if (jobs.length === 0) {
     return (
@@ -48,48 +73,67 @@ export default async function ListingsPage() {
             </th>
 
             <th className="text-left p-3">
+              Applications
+            </th>
+
+            <th className="text-left p-3">
               View
             </th>
           </tr>
         </thead>
 
         <tbody>
-          {jobs.map((job) => (
-            <tr
-              key={job.id}
-              className="border-b"
-            >
-              <td className="p-3">
-                {job.title}
-              </td>
+          <tbody>
+            {jobs.map((job) => {
+              const stat = stats.find(
+                (s) => s.jobId === job.id
+              );
 
-              <td className="p-3">
-                {job.company}
-              </td>
+              const applicationCount =
+                stat?.applicationCount ?? 0;
 
-              <td className="p-3">
-                {job.location}
-              </td>
-
-              <td className="p-3">
-                {job.isActive
-                  ? "Open"
-                  : "Closed"}
-              </td>
-
-              <td className="p-3">
-                <Link
-                  href={`/jobs/${job.id}`}
-                  className="
-                    text-blue-600
-                    hover:underline
-                  "
+              return (
+                <tr
+                  key={job.id}
+                  className="border-b"
                 >
-                  View
-                </Link>
-              </td>
-            </tr>
-          ))}
+                  <td className="p-3">
+                    {job.title}
+                  </td>
+
+                  <td className="p-3">
+                    {job.company}
+                  </td>
+
+                  <td className="p-3">
+                    {job.location}
+                  </td>
+
+                  <td className="p-3">
+                    {job.isActive
+                      ? "Open"
+                      : "Closed"}
+                  </td>
+
+                  <td className="p-3">
+                    {applicationCount}
+                  </td>
+
+                  <td className="p-3">
+                    <Link
+                      href={`/jobs/${job.id}`}
+                      className="
+                        text-blue-600
+                        hover:underline
+                      "
+                    >
+                      View
+                    </Link>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
         </tbody>
       </table>
     </>

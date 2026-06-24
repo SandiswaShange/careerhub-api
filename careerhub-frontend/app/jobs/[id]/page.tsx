@@ -17,7 +17,7 @@ export default async function JobDetailPage({
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/v1/jobs/${id}`,
     {
-      cache: "no-store",
+      next: { tags: ["jobs"] },
     }
   );
 

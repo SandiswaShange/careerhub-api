@@ -1,4 +1,83 @@
-import { JobListing } from "@/types";
+export const jobs = [
+  {
+    id: "550e8400-e29b-41d4-a716-446655440000",
+    title: "Junior Software Developer",
+    company: "CareerHub",
+    location: "Johannesburg",
+    status: "Open",
+    description:
+      "Build and maintain backend services using .NET and PostgreSQL.",
+  },
+  {
+    id: "550e8400-e29b-41d4-a716-446655440001",
+    title: "Frontend Developer",
+    company: "CareerHub",
+    location: "Cape Town",
+    status: "Open",
+    description:
+      "Develop modern React and Next.js user interfaces.",
+  },
+  {
+    id: "550e8400-e29b-41d4-a716-446655440002",
+    title: "QA Tester",
+    company: "CareerHub",
+    location: "London",
+    status: "Closed",
+    description:
+      "Create and execute automated and manual test plans.",
+  },
+];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*import { JobListing } from "@/types";
 
 export const jobs: JobListing[] = [
   {
@@ -73,4 +152,4 @@ export const jobs: JobListing[] = [
   isActive: true,
   applicantCount: 3
   }
-];
+];*/
