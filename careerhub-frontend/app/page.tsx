@@ -1,109 +1,49 @@
-"use client";
+import Link from "next/link";
 
-import { useState, useEffect  } from "react";
-import { JobList } from "@/components/JobList";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { useQuery } from "@tanstack/react-query";
-import { fetchJobs } from "@/lib/api";
-import { JobListSkeleton } from "@/components/JobCardSkeleton";
-
-export default function Home() {
-
-const [selectedId, setSelectedId] = useState<string | null>(() => {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  return sessionStorage.getItem("selectedJobId");
-});
-const {
-  data: jobs,
-  isPending,
-  isError,
-  error,
-  refetch,
-} = useQuery({
-  queryKey: ["jobs"],
-  queryFn: fetchJobs,
-  //queryFn: () => new Promise(() => {}), for testing skeleton animation
-});
-
-
-useEffect(() => {
-  if (selectedId) {
-    sessionStorage.setItem("selectedJobId", selectedId);
-  } else {
-    sessionStorage.removeItem("selectedJobId");
-  }
-}, [selectedId]);
-
-  const selectedJob =
-    jobs?.find((job) => job.id === selectedId) ?? null;
-
-  function handleSelect(id: string) {
-    setSelectedId(selectedId === id ? null : id);
-  }
-
-  if (isPending) {
+export default function HomePage() {
   return (
-    <main className="p-8">
-      <h1 className="text-3xl font-bold mb-6">
-        CareerHub Frontend
+    <div className="max-w-4xl mx-auto px-8 py-16">
+      <h1 className="text-5xl font-bold mb-6">
+        CareerHub
       </h1>
 
-      <JobListSkeleton />
-    </main>
-  );
-}
+      <p className="text-lg mb-8 text-slate-600 dark:text-slate-400">
+        CareerHub connects employers with talented candidates.
+        Browse open opportunities as a candidate or manage
+        listings through the employer dashboard.
+      </p>
 
-if (isError) {
-  return (
-    <main className="p-8">
-      <div className="border rounded p-6 bg-red-50 border-red-200 dark:bg-red-950 dark:border-red-800">
-        <h2 className="font-semibold mb-2">
-          Failed to load jobs
-        </h2>
-
-        <p className="mb-4">
-          {error.message}
-        </p>
-
-        <button
-          onClick={() => refetch()}
-          className="px-4 py-2 rounded border"
+      <div className="flex gap-4">
+        <Link
+          href="/jobs"
+          className="
+            rounded
+            px-6
+            py-3
+            bg-blue-600
+            text-white
+            hover:bg-blue-700
+          "
         >
-          Try again
-        </button>
+          Browse Jobs
+        </Link>
+
+        <Link
+          href="/dashboard/listings"
+          className="
+            rounded
+            px-6
+            py-3
+            border
+            border-slate-300
+            hover:bg-slate-100
+            dark:border-slate-700
+            dark:hover:bg-slate-800
+          "
+        >
+          Employer Dashboard
+        </Link>
       </div>
-    </main>
-  );
-}
-
-  return (
-    <main className="p-8">
-      <div className="flex items-center justify-between mb-6">
-      <h1 className="text-3xl font-bold">
-        CareerHub Frontend
-      </h1>
-
-      <ThemeToggle />
     </div>
-
-      {selectedJob && (
-        <div className="border rounded p-4 mb-6">
-          <h2 className="font-semibold">
-            {selectedJob.title}
-          </h2>
-          <p>{selectedJob.company}</p>
-        </div>
-      )}
-
-     {jobs && ( <JobList
-        jobs={jobs}
-        selectedId={selectedId}
-        onSelect={handleSelect}
-      />
-      )}
-    </main>
   );
 }
