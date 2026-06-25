@@ -53,7 +53,10 @@ export function mapJobListing(
 export async function fetchJobs(): Promise<JobListing[]> {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  const res = await fetch(`${baseUrl}/api/v1/jobs`);
+  const res = await fetch(`${baseUrl}/api/v1/jobs`,
+    {
+      next: { tags: ["jobs"] },
+    });
 
   if (!res.ok) {
     throw new Error(`Failed to fetch jobs: HTTP ${res.status}`);
