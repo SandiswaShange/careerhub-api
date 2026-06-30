@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ApplicationForm, ApplicationFormData } from "@/components/applicationform";
 import { JobDetail } from "@/types";
+import ApplicationWizard from "@/components/ApplicationWizard";
 
 interface PageProps {
   params: Promise<{
@@ -81,7 +82,7 @@ const isClosed = !job.isActive;
 
       <div className="mt-8">
         {!isClosed ? (
-          <ApplicationForm
+          <ApplicationWizard
             jobId={job.id}
             jobTitle={job.title}
           />
