@@ -2,6 +2,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { submitApplication } from "@/lib/api";
 import { cn } from "@/lib/utils";
@@ -105,17 +106,25 @@ const {
     },
   });
 
-  const mutation = useMutation({
-    mutationFn: submitApplication,
+const mutation = useMutation({
+  mutationFn: submitApplication,
 
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ["jobs"],
-      });
+  onSuccess: async () => {
+    await queryClient.invalidateQueries({
+      queryKey: ["jobs"],
+    });
 
-      reset();
-    },
-  });
+    toast.success(
+      `Your application for "${jobTitle}" has been submitted successfully.`
+    );
+
+    reset();
+  },
+
+  onError: (error: Error) => {
+    toast.error(error.message);
+  },
+});
 
   async function onValid(
     data: ApplicationFormData
@@ -129,42 +138,8 @@ const {
   const isBusy =
     isSubmitting || mutation.isPending;
 
-  if (mutation.isSuccess) {
-    return (
-      <div
-        className="
-          rounded-lg border p-4
-          bg-green-50 border-green-200
-          dark:bg-green-950 dark:border-green-800
-        "
-      >
-        <h2 className="font-semibold">
-          Application Submitted
-        </h2>
-
-        <p className="mt-2">
-          Your application for{" "}
-          <strong>{jobTitle}</strong>
-          {" "}has been submitted.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <>
-      {mutation.isError && (
-        <div
-          className="
-            mb-6 rounded-lg border p-4
-            bg-red-50 border-red-200
-            dark:bg-red-950 dark:border-red-800
-          "
-        >
-          {mutation.error.message}
-        </div>
-      )}
-
       {/* noValidate prevents browser validation UI so RHF/Zod is the single source of truth */}
       <form
         noValidate

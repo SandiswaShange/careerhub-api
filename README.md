@@ -411,3 +411,45 @@ fetch only rejects its promise when a network-level failure occurs, such as loss
 ## Stale-while-revalidate
 By default, TanStack Query uses "staleTime: 0". This means cached data becomes stale immediately after it is fetched. When a user switches to another browser tab and later returns, TanStack Query can trigger a background refetch. The existing data remains visible while the new request is running, meaning the user continues seeing the current job listings without interruption. If updated data arrives, the UI updates automatically.
 With a standard useEffect[], the fetch only occurs when the component mounts. When the user returns to the tab later, no automatic refetch occurs, meaning the user continues viewing potentially outdated data until they manually refresh the page.
+
+## Draft persistence strategy
+
+I chose the storage key careerhub-application-${jobId} so that every job application has its own draft. This prevents drafts for different jobs from overwriting each other. If a candidate begins applications for two separate jobs at the same time, each draft is stored independently and can be restored only when visiting the corresponding job page.
+
+Since localStorage is tied to a single browser on a single device, drafts are not shared across devices. If the same candidate opens CareerHub on another computer or browser, there will be no saved draft because the data never leaves the local machine.
+
+The draft should be cleared in the following situations:
+* After a successful application submission, because the draft is no longer needed.
+* When the user explicitly chooses Discard Draft, because they intentionally want to remove their saved progress.
+
+The form stores only non-sensitive application information such as the applicant's name, email address, phone number, cover letter, LinkedIn URL and referral source. Authentication information, session data, access tokens and any server-generated information are deliberately excluded because localStorage is accessible through client-side JavaScript and should never contain sensitive credentials.
+
+## The skeleton loader contract
+
+Matching dimensions means the skeleton occupies approximately the same space as the final JobCard. It should use the same overall height, padding, spacing between elements and approximate text line lengths so that replacing the skeleton with real content causes little or no layout shift.
+
+If the filtered results eventually contain three jobs but the loading state initially displays six skeleton cards, the user briefly sees more content than will actually exist. This is acceptable because the loading state represents an estimated page structure rather than the final data. Showing six skeleton cards gives users the impression that content is actively loading while maintaining a balanced layout. Showing too few skeletons can make the page appear incomplete, while showing too many wastes screen space and may create unrealistic expectations.
+
+The JobCard and JobCardSkeleton form a paired component. Whenever the layout of the JobCard changes, its skeleton should be updated alongside it. If the two components drift apart, the loading state no longer reflects the final layout, causing visual jumps and reducing the perceived quality of the interface.
+
+## AlertDialog vs the alternatives
+
+Closing a job listing is a destructive action that permanently changes the system state, so it should use an AlertDialog. This forces the user to consciously confirm the action before it is executed.
+
+Discarding an application draft should also use an AlertDialog because deleting the saved draft cannot be undone. The dialog clearly communicates the consequences before removing the user's progress.
+
+A regular Dialog is better suited for workflows that collect additional information, while an inline confirmation is appropriate only for small, easily reversible actions. Neither is suitable for irreversible operations such as closing a listing or deleting a draft.
+
+The CloseJobButton was originally implemented using a Server Action with useActionState. The challenge is that AlertDialogAction is rendered inside a Radix portal, outside of the form element in the DOM. Because it is no longer inside the form, type="submit" has no effect and clicking the confirmation button does not submit the form.
+
+I chose to keep the Server Action and trigger it programmatically using useTransition after the user confirms the AlertDialog. The dialog manages its own open state on the client, and the confirmation button starts the transition that invokes the Server Action. This preserves the existing Server Action architecture while avoiding the limitation created by the portal rendering.
+
+## Empty state taxonomy
+
+The two empty states represent different situations and therefore require different user interfaces.
+
+If the database contains no jobs at all, the user cannot take any action to change the outcome. The interface should simply inform them that no jobs are currently available.
+
+If jobs exist but the selected filters return no matches, the user can immediately resolve the situation by changing or clearing the filters. In this case, the interface should explain that no jobs match the current search and provide a Clear all filters action.
+
+The distinction is made after the jobs have been fetched. The server determines whether the database itself contains any jobs, while the filtered result determines whether the current search eliminated them all. Since the filtering logic is already applied when preparing the data for the page, this decision naturally belongs alongside that filtering logic before the UI is rendered.

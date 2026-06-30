@@ -1,10 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
-import {
-  closeJobListing,
-  type CloseJobState,
-} from "@/app/actions/closeJob";
+import { useActionState, useEffect } from "react";
+import { closeJobListing, type CloseJobState,} from "@/app/actions/closeJob";
+import { toast } from "sonner";
 
 type Props = {
   jobId: string;
@@ -20,6 +18,17 @@ export default function CloseJobButton({
       closeJobListing,
       null
     );
+
+    useEffect(() => {
+  if (!state) return;
+
+  if (state.status === "success") {
+    toast.success(`"${state.jobTitle}" has been closed.`);
+  }
+
+  if (state.status === "error") {
+    toast.error(state.message);
+  }}, [state]);
 
   if (currentStatus === "Closed") {
     return null;
@@ -52,12 +61,6 @@ export default function CloseJobButton({
             : "Close"}
         </button>
       </form>
-
-      {state?.status === "error" && (
-        <p className="text-red-600 text-sm mt-1">
-          {state.message}
-        </p>
-      )}
     </>
   );
 }
