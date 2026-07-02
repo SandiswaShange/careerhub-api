@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Gt4RkROGFqo=",
+  "dgSpecHash": "0UeE1qMOTfI=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Sandi\\Downloads\\18 June\\API.Tests\\API.Tests.csproj",
+  "projectFilePath": "C:\\Users\\Sandi\\Documents\\Projex\\29 June\\careerhub-api\\API.Tests\\API.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Sandi\\.nuget\\packages\\asp.versioning.abstractions\\10.0.0\\asp.versioning.abstractions.10.0.0.nupkg.sha512",
     "C:\\Users\\Sandi\\.nuget\\packages\\asp.versioning.http\\10.0.0\\asp.versioning.http.10.0.0.nupkg.sha512",

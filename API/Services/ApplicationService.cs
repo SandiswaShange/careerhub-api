@@ -49,7 +49,8 @@ public class ApplicationService(IApplicationRepository applicationRepository,IJo
         ApplicantId = dto.ApplicantId,
         JobListingId = dto.JobListingId,
         SubmittedAt = DateTime.UtcNow,
-        Status = ApplicationStatus.Submitted
+        Status = ApplicationStatus.Submitted,
+        HearAboutRole = dto.HearAboutRole
     };
 
     await _applicationRepository

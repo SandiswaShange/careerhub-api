@@ -30,11 +30,9 @@ export interface ApplicationRequest {
   fullName: string;
   email: string;
   phone?: string;
-  yearsOfExperience: number;
-  coverLetter: string;
+  coverLetter?: string;
   linkedInUrl?: string;
-  availableImmediately: boolean;
-  noticePeriodWeeks: number;
+  heardAboutRole: string;
 }
 
 export interface ApplicationResponse {

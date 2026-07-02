@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ApplicationForm, ApplicationFormData } from "@/components/applicationform";
+//import { ApplicationForm, ApplicationFormData } from "@/components/applicationform";
 import { JobDetail } from "@/types";
 import ApplicationWizard from "@/components/ApplicationWizard";
 

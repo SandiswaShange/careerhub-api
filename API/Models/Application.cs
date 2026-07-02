@@ -13,4 +13,5 @@ public class Application
     public DateTime SubmittedAt { get; set; }
 
     public ApplicationStatus Status { get; set; }
+    public string HearAboutRole { get; set; } = string.Empty;
 }

@@ -8,5 +8,6 @@ public record CreateApplicationRequest(
     Guid ApplicantId,
 
     [Required]
-    Guid JobListingId
+    Guid JobListingId,
+    string HearAboutRole
 );

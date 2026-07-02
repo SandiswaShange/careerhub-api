@@ -1,21 +1,11 @@
 import { z } from "zod";
 
 export const applicationWizardSchema = z.object({
-  fullName: z
-    .string()
-    .trim()
-    .min(1, "Full name is required"),
-
-  email: z
-    .email("Please enter a valid email address"),
-
+  fullName: z.string().trim().min(1, "Full name is required"),
+  email: z.email("Please enter a valid email address"),
   phone: z.string().optional(),
-
   coverLetter: z.string().optional(),
-
-  linkedInUrl: z
-    .string()
-    .optional()
+  linkedInUrl: z.string().optional()
     .refine(
       (value) =>
         !value ||
