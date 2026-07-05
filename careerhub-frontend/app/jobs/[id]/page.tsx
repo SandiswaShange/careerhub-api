@@ -2,7 +2,20 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 //import { ApplicationForm, ApplicationFormData } from "@/components/applicationform";
 import { JobDetail } from "@/types";
-import ApplicationWizard from "@/components/ApplicationWizard";
+import dynamic from "next/dynamic";
+
+const ApplicationWizard = dynamic(
+  () =>
+    import("@/components/ApplicationWizard").then((mod) => ({
+      default: mod.ApplicationWizard,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-96 animate-pulse rounded-lg border bg-muted" />
+    ),
+  }
+);
 
 interface PageProps {
   params: Promise<{
