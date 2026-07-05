@@ -38,10 +38,33 @@ export default async function JobsPage() {
     );
   }
 
-  if (jobs.length === 0) {
+  const activeJobs = jobs.filter((job) => job.isActive);
+
+if (jobs.length === 0) {
+  return (
+    <main className="p-8 flex flex-col items-center justify-center">
+      <h1 className="text-2xl font-bold">
+        No jobs available
+      </h1>
+
+      <p className="mt-2 text-muted-foreground">
+        There are currently no job listings.
+        Please check back later.
+      </p>
+    </main>
+  );
+}
+
+  if (activeJobs.length === 0) {
     return (
-      <main className="p-8">
-        <p>No job listings are currently available.</p>
+      <main className="p-8 flex flex-col items-center justify-center">
+        <h1 className="text-2xl font-bold">
+          No open positions
+        </h1>
+
+        <p className="mt-2 text-muted-foreground">
+          All current job listings have closed.
+        </p>
       </main>
     );
   }
@@ -53,7 +76,7 @@ export default async function JobsPage() {
       </h1>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {jobs.map((job) => (
+        {activeJobs.map((job) => (
           <JobLinkCard key={job.id} job={job} />
         ))}
       </div>

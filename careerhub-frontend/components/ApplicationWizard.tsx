@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,11 +6,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { submitApplication } from "@/lib/api";
-
-import {
-  applicationWizardSchema,
-  type ApplicationWizardData,
-} from "@/lib/applicationWizardSchema";
+import { applicationWizardSchema, type ApplicationWizardData,} from "@/lib/applicationWizardSchema";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger, } from "@/components/ui/alert-dialog";
 
 type Props = {
   jobId: string;
@@ -31,10 +27,12 @@ function displayValue(value?: string | null) {
   return value && value.trim() ? value : "Not provided";
 }
 
-export default function ApplicationWizard({ jobId, jobTitle }: Props) {
+export function ApplicationWizard({ jobId, jobTitle }: Props) {
   const [step, setStep] = useState(1);
   const [signInMessage, setSignInMessage] = useState<string | null>(null);
   const [draftReady, setDraftReady] = useState(false);
+  const [draftRestored, setDraftRestored] = useState(false);
+  const [hasDraft, setHasDraft] = useState(false);
 
   const storageKey = useMemo(() => `careerhub-application-${jobId}`, [jobId]);
 
@@ -83,12 +81,14 @@ export default function ApplicationWizard({ jobId, jobTitle }: Props) {
     const savedDraft = localStorage.getItem(storageKey);
 
     if (savedDraft) {
-      try {
-        form.reset(JSON.parse(savedDraft));
-      } catch {
-        localStorage.removeItem(storageKey);
-      }
-    }
+  try {
+    form.reset(JSON.parse(savedDraft));
+    setDraftRestored(true);
+    setHasDraft(true);
+  } catch {
+    localStorage.removeItem(storageKey);
+  }
+}
 
     setDraftReady(true);
   }, [form, storageKey]);
@@ -96,6 +96,7 @@ export default function ApplicationWizard({ jobId, jobTitle }: Props) {
   useEffect(() => {
     if (!draftReady) return;
     localStorage.setItem(storageKey, JSON.stringify(watchedValues));
+    setHasDraft(true);
   }, [draftReady, storageKey, watchedValues]);
 
   async function nextStep() {
@@ -125,6 +126,18 @@ export default function ApplicationWizard({ jobId, jobTitle }: Props) {
     setStep((current) => current + 1);
   }
 
+  function discardDraft() {
+  localStorage.removeItem(storageKey);
+
+  form.reset();
+
+  setStep(1);
+
+  setDraftRestored(false);
+
+  setHasDraft(false);
+}
+
   async function onSubmit(data: ApplicationWizardData) {
     await mutation.mutateAsync({jobId,...data,});
   }
@@ -153,6 +166,22 @@ export default function ApplicationWizard({ jobId, jobTitle }: Props) {
           {signInMessage}
         </p>
       )}
+
+      {draftRestored && (
+  <div className="rounded border border-green-300 bg-green-50 p-3 flex justify-between items-center">
+    <span>
+      You have a saved draft for this application. Restored automatically.
+    </span>
+
+    <button
+      type="button"
+      onClick={() => setDraftRestored(false)}
+      className="text-sm underline"
+    >
+      Dismiss
+    </button>
+  </div>
+)}
 
       <div className="rounded-lg border p-6">
         {step === 1 && (
@@ -296,6 +325,45 @@ export default function ApplicationWizard({ jobId, jobTitle }: Props) {
           </div>
         )}
       </div>
+
+      {hasDraft && (
+        <div className="flex justify-end">
+          <AlertDialog>
+          <AlertDialogTrigger
+            render={
+              <button
+                type="button"
+                className="rounded border border-red-600 px-4 py-2"
+              >
+                Discard Draft
+              </button>
+            }
+          />
+
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                Discard your draft?
+              </AlertDialogTitle>
+
+              <AlertDialogDescription>
+                Your saved application progress will be permanently deleted.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <AlertDialogFooter>
+              <AlertDialogCancel>
+                Keep draft
+              </AlertDialogCancel>
+
+              <AlertDialogAction onClick={discardDraft}>
+                Discard draft
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        </div>
+      )}
 
       <div className="flex justify-between">
         <button
