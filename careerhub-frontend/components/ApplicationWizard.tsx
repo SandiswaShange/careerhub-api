@@ -396,3 +396,4 @@ export function ApplicationWizard({ jobId, jobTitle }: Props) {
     </form>
   );
 }
+export default ApplicationWizard;
