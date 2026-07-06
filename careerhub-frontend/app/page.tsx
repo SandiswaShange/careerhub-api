@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function HomePage() {
   return (
@@ -6,6 +7,14 @@ export default function HomePage() {
       <h1 className="text-5xl font-bold mb-6">
         CareerHub
       </h1>
+      <Image
+      src="/hero.svg"
+      alt="CareerHub"
+      width={1200}
+      height={600}
+      priority
+      className="mb-8 rounded-lg"
+    />
 
       <p className="text-lg mb-8 text-slate-600 dark:text-slate-400">
         CareerHub connects employers with talented candidates.

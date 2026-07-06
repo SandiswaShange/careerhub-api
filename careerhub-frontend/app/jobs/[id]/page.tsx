@@ -2,20 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 //import { ApplicationForm, ApplicationFormData } from "@/components/applicationform";
 import { JobDetail } from "@/types";
-import dynamic from "next/dynamic";
-
-const ApplicationWizard = dynamic(
-  () =>
-    import("@/components/ApplicationWizard").then((mod) => ({
-      default: mod.ApplicationWizard,
-    })),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="h-96 animate-pulse rounded-lg border bg-muted" />
-    ),
-  }
-);
+import { ApplicationWizardLoader } from "@/components/ApplicationWizardLoader";
+import { fetchJob } from "@/lib/api";
 
 interface PageProps {
   params: Promise<{
@@ -28,25 +16,7 @@ export default async function JobDetailPage({
 }: PageProps) {
   const { id } = await params;
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/jobs/${id}`,
-    {
-      next: { tags: ["jobs"] },
-    }
-  );
-
-  if (res.status === 404) {
-    notFound();
-  }
-
-  if (!res.ok) {
-    throw new Error(
-      `Failed to load job: ${res.status}`
-    );
-  }
-
-  const job =
-    (await res.json()) as JobDetail;
+const job = await fetchJob(id);
 
 const isClosed = !job.isActive;
 
@@ -95,7 +65,7 @@ const isClosed = !job.isActive;
 
       <div className="mt-8">
         {!isClosed ? (
-          <ApplicationWizard
+          <ApplicationWizardLoader
             jobId={job.id}
             jobTitle={job.title}
           />

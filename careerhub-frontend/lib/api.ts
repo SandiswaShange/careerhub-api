@@ -1,5 +1,7 @@
 import { JobListing } from "@/types";
 import {ApplicationRequest,ApplicationResponse,} from "@/types";
+import { parseApiError } from "@/lib/api-error";
+import { JobDetail } from "@/types";
 
 type PagedResponse<T> = {
   data: T[];
@@ -59,12 +61,31 @@ export async function fetchJobs(): Promise<JobListing[]> {
     });
 
   if (!res.ok) {
-    throw new Error(`Failed to fetch jobs: HTTP ${res.status}`);
+    throw await parseApiError(res);
   }
 
   const result = await res.json()as PagedResponse<ApiJobListing>;
 
   return result.data.map(mapJobListing);
+}
+
+export async function fetchJob(id: string): Promise<JobDetail> {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  const res = await fetch(
+    `${baseUrl}/api/v1/jobs/${id}`,
+    {
+      next: {
+        tags: ["jobs"],
+      },
+    }
+  );
+
+  if (!res.ok) {
+    throw await parseApiError(res);
+  }
+
+  return res.json();
 }
 
 /*============================================Assignment 1.4=====================================================================*/
@@ -74,7 +95,7 @@ export async function submitApplication(
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const res = await fetch(
-    `${baseUrl}/api/applications`,
+    `${baseUrl}/api/v1/applications`,
     {
       method: "POST",
       headers: {

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Sandi\\Documents\\Projex\\29 June\\careerhub-api\\API\\API.csproj": {}
+    "C:\\Users\\Sandi\\Documents\\Projex\\29 June\\careerhub-api\\api\\API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Sandi\\Documents\\Projex\\29 June\\careerhub-api\\API\\API.csproj": {
+    "C:\\Users\\Sandi\\Documents\\Projex\\29 June\\careerhub-api\\api\\API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Sandi\\Documents\\Projex\\29 June\\careerhub-api\\API\\API.csproj",
+        "projectUniqueName": "C:\\Users\\Sandi\\Documents\\Projex\\29 June\\careerhub-api\\api\\API.csproj",
         "projectName": "API",
-        "projectPath": "C:\\Users\\Sandi\\Documents\\Projex\\29 June\\careerhub-api\\API\\API.csproj",
+        "projectPath": "C:\\Users\\Sandi\\Documents\\Projex\\29 June\\careerhub-api\\api\\API.csproj",
         "packagesPath": "C:\\Users\\Sandi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Sandi\\Documents\\Projex\\29 June\\careerhub-api\\API\\obj\\",
+        "outputPath": "C:\\Users\\Sandi\\Documents\\Projex\\29 June\\careerhub-api\\api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Sandi\\AppData\\Roaming\\NuGet\\NuGet.Config"

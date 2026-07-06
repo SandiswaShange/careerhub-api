@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600">
+  <rect width="1200" height="600" fill="#2563eb"></rect>
+  <text x="600" y="300" font-size="48" text-anchor="middle" fill="white">
+    CareerHub
+  </text>
+</svg>

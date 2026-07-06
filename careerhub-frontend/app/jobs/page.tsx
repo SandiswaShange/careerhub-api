@@ -1,5 +1,6 @@
 import { JobLinkCard } from "@/components/JobLinkCard";
 import { ApiJobListing, mapJobListing } from "@/lib/api";
+import { fetchJobs } from "@/lib/api";
 
 type PagedResponse<T> = {
   data: T[];
@@ -9,21 +10,7 @@ export default async function JobsPage() {
   let jobs = [];
 
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/jobs`,
-      {
-        next: { tags: ["jobs"] },
-      }
-    );
-
-    if (!res.ok) {
-      throw new Error();
-    }
-
-    const result =
-      (await res.json()) as PagedResponse<ApiJobListing>;
-
-    jobs = result.data.map(mapJobListing);
+ jobs = await fetchJobs();
   } catch {
     return (
       <main className="p-8">

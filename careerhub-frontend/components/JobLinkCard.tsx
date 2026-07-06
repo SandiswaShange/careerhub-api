@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { JobListing } from "@/types";
 import { JobStatusBadge } from "./JobStatusBadge";
+import Image from "next/image";
 
 interface JobLinkCardProps {
   job: JobListing;
@@ -25,13 +26,24 @@ export function JobLinkCard({
         dark:border-slate-800
       "
     >
-      <h2 className="text-xl font-semibold">
-        {job.title}
-      </h2>
+    <div className="flex items-center gap-3">
+      <Image
+        src="/company-logo.svg"
+        alt={`${job.company} logo`}
+        width={40}
+        height={40}
+      />
 
-      <p className="mt-1">
-        {job.company}
-      </p>
+      <div>
+        <h2 className="text-xl font-semibold">
+          {job.title}
+        </h2>
+
+        <p className="mt-1">
+          {job.company}
+        </p>
+      </div>
+    </div>
 
       <p className="text-sm text-slate-500">
         {job.location}
